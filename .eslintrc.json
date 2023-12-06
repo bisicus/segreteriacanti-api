@@ -1,0 +1,41 @@
+{
+  // Inspired by: https://www.aleksandrhovhannisyan.com/blog/format-code-on-save-vs-code-eslint
+  // for jsdoc: https://www.npmjs.com/package/eslint-plugin-jsdoc#user-content-eslint-plugin-jsdoc-configuration
+  "extends": ["eslint:recommended", "plugin:prettier/recommended", "plugin:@typescript-eslint/recommended", "plugin:jsdoc/recommended"],
+  "plugins": ["@typescript-eslint", "jsdoc", "simple-import-sort", "prettier"],
+  "rules": {
+    "consistent-return": "error",
+    "dot-notation": "off",
+    "eqeqeq": "error",
+    "no-console": "warn",
+    "no-fallthrough": "error",
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "prettier/prettier": "error",
+    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/dot-notation": "error",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn",
+    "jsdoc/require-param": 0,
+    "jsdoc/require-param-type": 0,
+    "jsdoc/check-param-names": 0,
+    "jsdoc/require-returns": 0
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "project": ["tsconfig.json", "tsconfig.jest.json"]
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "jest": true
+  },
+  "ignorePatterns": ["node_modules", "build", "dist", "public", "lib"]
+}

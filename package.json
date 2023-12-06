@@ -1,16 +1,29 @@
 {
-	"name": "segreteriacanti-api",
-	"version": "1.0.0",
-	"description": "",
-	"main": "./dist/app.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"author": "",
-	"license": "ISC",
-	"devDependencies": {
-		"@types/node": "^20.10.3",
-		"ts-node": "^10.9.1",
-		"typescript": "^5.3.2"
-	}
+  "name": "segreteriacanti-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --cache \"src/**/*.{js,jsx,ts,tsx}\"",
+    "lint:fix": "eslint --cache --fix \"src/**/*.{js,jsx,ts,tsx}\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.10.3",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.55.0",
+    "eslint-config-jsdoc": "^15.4.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jsdoc": "^46.9.0",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "prettier": "^3.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
+  }
 }
