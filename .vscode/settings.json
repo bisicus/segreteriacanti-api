@@ -1,0 +1,21 @@
+{
+  "files.eol": "\n",
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.tabSize": 2, // match eslint+prettier
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "typescript.suggest.completeJSDocs": false,
+  "typescript.suggest.jsdoc.generateReturns": false,
+  "[yaml]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "yaml.format.singleQuote": true,
+  "yaml.format.printWidth": 80
+}
