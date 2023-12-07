@@ -25,3 +25,21 @@ services:
       timeout: 3s
       retries: 10
       start_period: 10s
+  sqlserver.init:
+    image: mcr.microsoft.com/mssql/server:${COMPOSE_TAG_SQLSERVER}
+    restart: 'no'
+    volumes:
+      - ./init/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    depends_on:
+      segrecanti_db:
+        condition: service_healthy
+    environment:
+      - MSSQL_SA_PASSWORD=${DATABASE_PWD}
+    command: >
+      bash -c '
+      set -e;
+      /opt/mssql-tools/bin/sqlcmd -S segrecanti_db -U sa -P "$$MSSQL_SA_PASSWORD" -i /docker-entrypoint-initdb.d/initdb_segrecanti.sql;
+      echo "All done!";
+      '
+    networks:
+      - segrecanti_net
