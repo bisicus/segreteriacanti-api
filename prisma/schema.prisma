@@ -9,3 +9,105 @@ datasource db {
   provider = "sqlserver"
   url      = env("DATABASE_URL")
 }
+
+/// @since 1.0.0
+model Canto {
+  id            Int             @id @default(autoincrement())
+  nome          String
+  // filesystem reference
+  refTesto      String?
+  // filesystem reference
+  refSpartito   String?
+  // filesystem reference
+  refAccordi    String?
+  /// --- RELATIONS --- ///
+  autori        Autore[]
+  registrazioni Registrazione[]
+  /// --- SYSTEM PROPERTIES --- ///
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+  createdBy     Int?
+  updatedBy     Int?
+}
+
+model Autore {
+  id        Int       @id @default(autoincrement())
+  nome      String
+  /// --- RELATIONS --- ///
+  canti     Canto[]
+  /// --- SYSTEM PROPERTIES --- ///
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  createdBy Int?
+  updatedBy Int?
+}
+
+/// @since 1.0.0
+model Registrazione {
+  id          Int       @id @default(autoincrement())
+  valutazione String?
+  commento    String?
+  canto_id    Int?      @map("_canto_id")
+  evento_id   Int?      @map("_evento_id")
+  gesto_id    Int?      @map("_gesto_id")
+  momento_id  Int?      @map("_momento_id")
+  // filesystem reference
+  refAudio    String?
+  /// --- RELATIONS --- ///
+  canto       Canto?    @relation(fields: [canto_id], references: [id])
+  evento      Evento?   @relation(fields: [evento_id], references: [id])
+  gesto       Gesto?    @relation(fields: [gesto_id], references: [id])
+  momento     Momento?  @relation(fields: [momento_id], references: [id])
+  /// --- SYSTEM PROPERTIES --- ///
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdBy   Int?
+  updatedBy   Int?
+}
+
+/// @since 1.0.0
+model Evento {
+  id            Int             @id @default(autoincrement())
+  nome          String
+  dataInizio    DateTime        @db.Date
+  dataFine      DateTime        @db.Date
+  /// --- RELATIONS --- ///
+  Registrazioni Registrazione[]
+  /// --- SYSTEM PROPERTIES --- ///
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+  createdBy     Int?
+  updatedBy     Int?
+}
+
+/// @since 1.0.0
+model Gesto {
+  id            Int             @id @default(autoincrement())
+  tipo          String
+  /// --- RELATIONS --- ///
+  registrazioni Registrazione[]
+  /// --- SYSTEM PROPERTIES --- ///
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+  createdBy     Int?
+  updatedBy     Int?
+}
+
+/// @since 1.0.0
+model Momento {
+  id            Int             @id @default(autoincrement())
+  quando        String
+  /// --- RELATIONS --- ///
+  registrazioni Registrazione[]
+  /// --- SYSTEM PROPERTIES --- ///
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+  createdBy     Int?
+  updatedBy     Int?
+}
