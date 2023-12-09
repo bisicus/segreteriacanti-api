@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { createSoftDeleteExtension } from 'prisma-extension-soft-delete';
 
 /**
  * global variable used to prevent hot-reloading in develop environment like nodemon
@@ -15,7 +16,25 @@ export const db =
   globalForPrisma.prisma ||
   new PrismaClient({
     errorFormat: 'minimal',
-  });
+  }).$extends(
+    createSoftDeleteExtension({
+      models: {
+        Canto: true,
+        Autore: true,
+        Registrazione: true,
+        Evento: true,
+        Gesto: true,
+        Momento: true,
+      },
+      defaultConfig: {
+        field: 'deletedAt',
+        createValue: (deleted) => {
+          if (deleted) return new Date();
+          return null;
+        },
+      },
+    })
+  );
 
 // @todo use a settings file instead of `process.env`
 if (process.env['NODE_ENV'] !== 'production') {
