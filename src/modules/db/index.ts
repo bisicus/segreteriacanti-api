@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { createSoftDeleteExtension } from 'prisma-extension-soft-delete';
 
+import { config } from '../../config';
+
 /**
  * global variable used to prevent hot-reloading in develop environment like nodemon
  * @see {@link https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections#prevent-hot-reloading-from-creating-new-instances-of-prismaclient}
@@ -36,7 +38,6 @@ export const db =
     })
   );
 
-// @todo use a settings file instead of `process.env`
-if (process.env['NODE_ENV'] !== 'production') {
+if (config.NODE_ENV !== 'production') {
   globalForPrisma.prisma = db;
 }
