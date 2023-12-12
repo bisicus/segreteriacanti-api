@@ -6,6 +6,7 @@ import type { Express } from 'express-serve-static-core';
 import * as http from 'http';
 
 import { errorHandler } from '../../middlewares/ErrorHandler';
+import requestID from '../../middlewares/requestID';
 
 /**
  * @since 1.0.0
@@ -24,6 +25,9 @@ export class HttpServer {
     this.app = express();
 
     // =====   MIDDLEWARES   ===== //
+    // Append ID to incoming request
+    this.app.use(requestID());
+
     // parse application/x-www-form-urlencoded
     this.app.use(bodyParser.urlencoded({ extended: false }));
 
