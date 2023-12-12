@@ -14,6 +14,10 @@ if (missingRequiredEnvVars.length !== 0) {
 export const config = {
   NODE_ENV: process.env['NODE_ENV'] || 'production',
 
+  server: {
+    httpPort: Number.isNaN(Number(process.env['SERVER__HTTP_PORT'])) === false ? Number(process.env['SERVER__HTTP_PORT']) : 80,
+  },
+
   db: {
     connectionUrl: String(process.env['DATABASE_URL']),
   },
