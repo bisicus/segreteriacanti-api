@@ -1,4 +1,4 @@
-import type { LoggerOptions } from 'pino';
+import type { Bindings as PinoBindings, LoggerOptions as PinoOptions } from 'pino';
 import pino from 'pino';
 
 import { config } from '../../config';
@@ -8,7 +8,7 @@ import { config } from '../../config';
 /**
  * @since 1.0.0
  */
-const loggerOptions: LoggerOptions = {
+const loggerOptions: PinoOptions = {
   level: config.logging.level,
   // in JSON format, since we deploy in k8s, remove useless pid and hostname
   redact: {
@@ -38,7 +38,7 @@ if (config.logging.prettyPrint) {
 }
 
 // timestamp transform function
-let _timestampFn: LoggerOptions['timestamp'] | false = false;
+let _timestampFn: PinoOptions['timestamp'] | false = false;
 switch (config.logging.printTime) {
   case 'epoch':
     _timestampFn = pino.stdTimeFunctions.epochTime;
@@ -65,3 +65,8 @@ loggerOptions.timestamp = _timestampFn;
 const logger = pino(loggerOptions);
 
 export default logger;
+
+// re-export type to centralize pino imports only in this file
+export type LoggerOptions = PinoOptions;
+export type ChildLoggerBinding = PinoBindings;
+export type Logger = typeof logger;
