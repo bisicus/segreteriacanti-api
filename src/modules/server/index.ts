@@ -5,6 +5,8 @@ import express from 'express';
 import type { Express } from 'express-serve-static-core';
 import * as http from 'http';
 
+import { errorHandler } from '../../middlewares/ErrorHandler';
+
 /**
  * @since 1.0.0
  */
@@ -33,6 +35,9 @@ export class HttpServer {
   }
 
   public start() {
+    // default error handler
+    this.app.use(errorHandler);
+
     console.log(`starting the server on port ${this.port}`);
     this.http.listen(this.port);
   }
