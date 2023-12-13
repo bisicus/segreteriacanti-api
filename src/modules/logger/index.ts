@@ -8,7 +8,7 @@ import { config } from '../../config';
 /**
  * @since 1.0.0
  */
-const loggerOptions: PinoOptions = {
+export const loggerOptions: PinoOptions = {
   level: config.logging.level,
   // in JSON format, since we deploy in k8s, remove useless pid and hostname
   redact: {
