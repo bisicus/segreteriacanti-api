@@ -7,6 +7,7 @@ import * as http from 'http';
 
 import { errorHandler } from '../../middlewares/ErrorHandler';
 import requestID from '../../middlewares/requestID';
+import requestLogger from '../../middlewares/requestLogger';
 
 /**
  * @since 1.0.0
@@ -27,6 +28,9 @@ export class HttpServer {
     // =====   MIDDLEWARES   ===== //
     // Append ID to incoming request
     this.app.use(requestID());
+
+    // Append specific Logger to incoming request
+    this.app.use(requestLogger());
 
     // parse application/x-www-form-urlencoded
     this.app.use(bodyParser.urlencoded({ extended: false }));
