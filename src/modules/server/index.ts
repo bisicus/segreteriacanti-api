@@ -4,10 +4,12 @@ import type { Router } from 'express';
 import express from 'express';
 import type { Express } from 'express-serve-static-core';
 import * as http from 'http';
+import { pinoHttp } from 'pino-http';
 
 import { errorHandler } from '../../middlewares/ErrorHandler';
 import requestID from '../../middlewares/requestID';
 import requestLogger from '../../middlewares/requestLogger';
+import { loggerOptions } from '../logger';
 
 /**
  * @since 1.0.0
@@ -37,6 +39,9 @@ export class HttpServer {
 
     // parse application/json
     this.app.use(bodyParser.json());
+
+    // express-level logger
+    this.app.use(pinoHttp(loggerOptions));
 
     this.port = port;
     this.http = http.createServer(this.app);
