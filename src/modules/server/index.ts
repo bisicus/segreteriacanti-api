@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import bodyParser from 'body-parser';
 import type { Router } from 'express';
 import express from 'express';
@@ -9,7 +8,7 @@ import { pinoHttp } from 'pino-http';
 import { errorHandler } from '../../middlewares/ErrorHandler';
 import requestID from '../../middlewares/requestID';
 import requestLogger from '../../middlewares/requestLogger';
-import { loggerOptions } from '../logger';
+import logger, { loggerOptions } from '../logger';
 
 /**
  * @since 1.0.0
@@ -51,12 +50,12 @@ export class HttpServer {
     // default error handler
     this.app.use(errorHandler);
 
-    console.log(`starting the server on port ${this.port}`);
+    logger.info(`starting the server on port ${this.port}`);
     this.http.listen(this.port);
   }
 
   public loadRoutes(basePath: string, router: Router) {
-    console.log(`loading routes: ${basePath}`);
+    logger.info(`loading routes: ${basePath}`);
     this.app.use(basePath, router);
   }
 }

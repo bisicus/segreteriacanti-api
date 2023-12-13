@@ -1,7 +1,7 @@
-/* eslint-disable no-console */
 import type { NextFunction, Request, Response } from 'express';
 
 import { BaseError } from '../errors/BaseError';
+import logger from '../modules/logger';
 
 /**
  * @see {@link https://reflectoring.io/express-error-handling/}
@@ -10,8 +10,15 @@ import { BaseError } from '../errors/BaseError';
  * @todo logger
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFunction) => {
-  console.error(error);
+export const errorHandler = (error: Error, req: Request, res: Response, _next: NextFunction) => {
+  const _logger =
+    req.logger ??
+    logger.child({
+      requestId: req.id,
+      endpoint: req.path,
+      method: req.method,
+    });
+  _logger.error(error);
 
   let status = 500; //default value
   const message = error.message;

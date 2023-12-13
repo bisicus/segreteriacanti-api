@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
 import { config } from './config';
+import logger from './modules/logger';
 import { HttpServer } from './modules/server';
 import { v1Routes } from './routes/v1';
 
@@ -15,7 +15,7 @@ class App {
     const server = new HttpServer(config.server.httpPort);
     server.loadRoutes('/api/v1/', v1Routes);
     server.start();
-    console.info('server started');
+    logger.info('server started');
   }
 }
 
@@ -24,5 +24,5 @@ const app = new App();
  * @todo logger
  */
 app.init().then(() => {
-  console.info('App init completed');
+  logger.info('App init completed');
 });
