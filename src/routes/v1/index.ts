@@ -1,5 +1,7 @@
 import { Router } from 'express';
 
+import { importRouter } from './import';
+
 /**
  * @since 1.0.0
  */
@@ -9,6 +11,6 @@ const v1Routes = Router();
 // v1Routes.use(middlewareFunction());
 
 // load nested routers or endpoints
-// v1Routes.use('/nestedRouter', nesterRouter);
+v1Routes.use('/import', importRouter);
 
 export { v1Routes };
