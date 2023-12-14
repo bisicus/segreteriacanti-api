@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import type { Level } from 'pino';
 
 // Load .env
 dotenv.config();
@@ -20,5 +21,12 @@ export const config = {
 
   db: {
     connectionUrl: String(process.env['DATABASE_URL']),
+  },
+
+  logging: {
+    level: <Level>process.env['LOGGING__LEVEL_APP'] || 'debug',
+    prettyPrint: ['yes', 'y', '1', 'true'].includes(String(process.env['LOGGING__PRETTYPRINT']).toLowerCase()),
+    printLevelAsLabel: ['yes', 'y', '1', 'true'].includes(String(process.env['LOGGING__LEVEL_AS_LABEL']).toLowerCase()),
+    printTime: process.env['LOGGING__PRINT_TIME'] || 'epoch',
   },
 };
