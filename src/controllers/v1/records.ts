@@ -4,6 +4,9 @@ import { StatusCodes } from 'http-status-codes';
 import { BaseError } from '../../errors/BaseError';
 import { linkUploadedFile } from '../../modules/services/records';
 
+/**
+ * @since 1.0.0
+ */
 export const uploadAssets: RequestHandler = async (req, res, next) => {
   try {
     // validation
