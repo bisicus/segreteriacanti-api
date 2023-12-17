@@ -31,6 +31,14 @@ export const config = {
     connectionUrl: String(process.env['DATABASE_URL']),
   },
 
+  application: {
+    uploads: {
+      acceptedMime: {
+        audio: ['audio/mpeg', 'audio/mp4', 'audio/vnd.wav'],
+      },
+    },
+  },
+
   logging: {
     level: <Level>process.env['LOGGING__LEVEL_APP'] || 'debug',
     prettyPrint: ['yes', 'y', '1', 'true'].includes(String(process.env['LOGGING__PRETTYPRINT']).toLowerCase()),
