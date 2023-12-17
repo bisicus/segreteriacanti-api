@@ -2,6 +2,7 @@ import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
+import { linkUploadedFile } from '../../modules/services/records';
 
 export const uploadAssets: RequestHandler = async (req, res, next) => {
   try {
@@ -16,9 +17,9 @@ export const uploadAssets: RequestHandler = async (req, res, next) => {
       throw new BaseError('validation', "invalid value for field 'id'", StatusCodes.BAD_REQUEST);
     }
 
-    // TODO: servizio di upload
+    const registrazioneUpdated = await linkUploadedFile(Number(req.params['id']), req.file);
 
-    res.status(StatusCodes.OK).json({});
+    res.status(StatusCodes.OK).json(registrazioneUpdated);
   } catch (error) {
     next(error);
   }
