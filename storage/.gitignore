@@ -2,3 +2,6 @@
 *
 # Except this file
 !.gitignore
+# Except storage folders (but not content)
+!recordings
+!tmp
