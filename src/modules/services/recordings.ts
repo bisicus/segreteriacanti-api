@@ -18,10 +18,10 @@ import { forgeFilename } from '../models/recordings';
  * @todo se update in DB non funziona elimina il nuovo file
  * @todo implementare un "Cestino delle registrazioni?"
  */
-export const linkUploadedFile = async (recordId: number, file: Express.Multer.File): Promise<Registrazione> => {
+export const linkUploadedFile = async (recordingId: number, file: Express.Multer.File): Promise<Registrazione> => {
   const DBRegistrazioneConTitolo: RegistrazioneConTitoloCanto | null = await db.registrazione.findUnique({
     where: {
-      id: recordId,
+      id: recordingId,
     },
     include: {
       canto: {
@@ -55,7 +55,7 @@ export const linkUploadedFile = async (recordId: number, file: Express.Multer.Fi
     // aggiorna modello
     registrazioneUpdated = await db.registrazione.update({
       where: {
-        id: recordId,
+        id: recordingId,
       },
       data: {
         refAudio: filePath,

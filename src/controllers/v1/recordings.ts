@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
-import { linkUploadedFile } from '../../modules/services/records';
+import { linkUploadedFile } from '../../modules/services/recordings';
 
 /**
  * @since 1.0.0

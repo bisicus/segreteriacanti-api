@@ -2,7 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 
 import { config } from '../../config';
-import { uploadAssets } from '../../controllers/v1/records';
+import { uploadAssets } from '../../controllers/v1/recordings';
 
 /**
  * @since 1.0.0
