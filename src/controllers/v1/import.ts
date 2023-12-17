@@ -2,12 +2,12 @@ import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
+import { importRecords } from '../../modules/services/import';
 
 /**
  * Data injestion of several entities.
  * Input is an object array; each array element has the same structure.
  * @since 1.0.0
- * @todo return created models
  * @todo validation of every element of the array (evaluate `express-validator` or `zod`)
  * @todo support CSV import
  * @todo support XLSX import
@@ -20,11 +20,9 @@ export const importData: RequestHandler = async (req, res, next) => {
       throw new BaseError('validation', 'invalid input', StatusCodes.BAD_REQUEST);
     }
 
-    // TODO: include service that creates data
+    const newRegistrazioni = await importRecords(req.body);
 
-    res.status(StatusCodes.OK).json({
-      message: 'resources created',
-    });
+    res.status(StatusCodes.CREATED).json(newRegistrazioni);
   } catch (error) {
     next(error);
   }
