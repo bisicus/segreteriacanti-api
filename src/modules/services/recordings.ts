@@ -10,6 +10,31 @@ import { db } from '../db';
 import logger from '../logger';
 import type { RegistrazioneConTitoloCanto } from '../models/recordings';
 import { forgeFilename } from '../models/recordings';
+import { registrazioneToPublic } from '../to-public/registrazione';
+
+/**
+ * Ritorna l'oggetto che descrive una registrazione. Allega eventualmente le entità relazionate.
+ * @since 1.0.0
+ */
+export const fetchRecordingToPublic = async (recordingId: number) => {
+  const DBRegistrazione = await db.registrazione.findUnique({
+    where: {
+      id: recordingId,
+    },
+    include: {
+      canto: true,
+      evento: true,
+      gesto: true,
+      momento: true,
+    },
+  });
+  if (!DBRegistrazione) {
+    throw new BaseError('not-found', 'recording not found', StatusCodes.NOT_FOUND);
+  }
+
+  // Interfaccia pubblica
+  return registrazioneToPublic(DBRegistrazione);
+};
 
 /**
  * @since 1.0.0
