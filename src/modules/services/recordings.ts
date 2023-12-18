@@ -12,6 +12,33 @@ import type { RegistrazioneConTitoloCanto } from '../models/recordings';
 import { forgeFilename } from '../models/recordings';
 
 /**
+ * @since 1.0.0
+ * @todo controllare che il contenuto del file sia un audio
+ * @todo dare un nome al file che non `refAudio`
+ */
+export const getRecordingFile = async (recordingId: number) => {
+  const DBRegistrazione = await db.registrazione.findUnique({
+    where: {
+      id: recordingId,
+    },
+  });
+  if (!DBRegistrazione) {
+    throw new BaseError('not-found', 'recording not found', StatusCodes.NOT_FOUND);
+  }
+
+  if (DBRegistrazione.refAudio === null) {
+    throw new BaseError('not-found', 'file not found', StatusCodes.NOT_FOUND);
+  }
+  const filepath = path.join(config.storage.recordings, DBRegistrazione.refAudio);
+  if (fs.existsSync(filepath) === false) {
+    logger.fatal({ path: filepath, recordingId: recordingId }, 'il file non esiste nel Filesystem');
+    throw new BaseError('not-found', 'file not available', StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
+  return { filepath: filepath, filename: DBRegistrazione.refAudio };
+};
+
+/**
  * Crea una refenza tra un file e una `Registrazione`.
  * Se il modello è già linkato ad un file, sostituisce la referenza eliminando la vecchia registrazione.
  * @since 1.0.0

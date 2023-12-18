@@ -2,12 +2,14 @@ import { Router } from 'express';
 import multer from 'multer';
 
 import { config } from '../../config';
-import { uploadAssets } from '../../controllers/v1/recordings';
+import { downloadAsset, uploadAssets } from '../../controllers/v1/recordings';
 
 /**
  * @since 1.0.0
  */
 const recordsRouter = Router();
+
+recordsRouter.get('/:id/audio', downloadAsset);
 
 /**
  * @todo spostare `fileFilter` in file separato
