@@ -2,7 +2,27 @@ import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
-import { linkUploadedFile } from '../../modules/services/recordings';
+import { getRecordingFile, linkUploadedFile } from '../../modules/services/recordings';
+
+/**
+ * @since 1.0.0
+ */
+export const downloadAsset: RequestHandler = async (req, res, next) => {
+  try {
+    if (!req.params['id']) {
+      throw new BaseError('validation', 'missing field', StatusCodes.BAD_REQUEST);
+    }
+    if (Number.isNaN(Number(req.params['id']))) {
+      throw new BaseError('validation', "invalid value for field 'id'", StatusCodes.BAD_REQUEST);
+    }
+
+    const { filepath, filename } = await getRecordingFile(Number(req.params['id']));
+
+    res.download(filepath, filename); // Set content-disposition and send file.
+  } catch (error) {
+    next(error);
+  }
+};
 
 /**
  * @since 1.0.0
