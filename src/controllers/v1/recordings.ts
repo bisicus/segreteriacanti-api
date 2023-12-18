@@ -2,7 +2,28 @@ import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
-import { getRecordingFile, linkUploadedFile } from '../../modules/services/recordings';
+import { fetchRecordingToPublic, getRecordingFile, linkUploadedFile } from '../../modules/services/recordings';
+
+/**
+ * @since 1.0.0
+ * @todo spostare validazione in middleware precedente (valutare `express-validator` o `zod`)
+ */
+export const getRecordingObject: RequestHandler = async (req, res, next) => {
+  try {
+    if (!req.params['id']) {
+      throw new BaseError('validation', 'missing field', StatusCodes.BAD_REQUEST);
+    }
+    if (Number.isNaN(Number(req.params['id']))) {
+      throw new BaseError('validation', "invalid value for field 'id'", StatusCodes.BAD_REQUEST);
+    }
+
+    const recording = await fetchRecordingToPublic(Number(req.params['id']));
+
+    res.status(StatusCodes.OK).json(recording);
+  } catch (error) {
+    next(error);
+  }
+};
 
 /**
  * @since 1.0.0
