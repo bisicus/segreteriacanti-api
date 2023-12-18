@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import { importRouter } from './import';
-import { recordsRouter } from './recordings';
+import { recordingsRouter } from './recordings';
 
 /**
  * @since 1.0.0
@@ -13,6 +13,6 @@ const v1Routes = Router();
 
 // load nested routers or endpoints
 v1Routes.use('/import', importRouter);
-v1Routes.use('/recordings', recordsRouter);
+v1Routes.use('/recordings', recordingsRouter);
 
 export { v1Routes };

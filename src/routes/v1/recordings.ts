@@ -7,14 +7,14 @@ import { downloadAsset, uploadAssets } from '../../controllers/v1/recordings';
 /**
  * @since 1.0.0
  */
-const recordsRouter = Router();
+const recordingsRouter = Router();
 
-recordsRouter.get('/:id/audio', downloadAsset);
+recordingsRouter.get('/:id/audio', downloadAsset);
 
 /**
  * @todo spostare `fileFilter` in file separato
  */
-recordsRouter.post(
+recordingsRouter.post(
   '/:id/assets',
   multer({
     storage: multer.diskStorage({
@@ -32,4 +32,4 @@ recordsRouter.post(
   uploadAssets
 );
 
-export { recordsRouter };
+export { recordingsRouter };
