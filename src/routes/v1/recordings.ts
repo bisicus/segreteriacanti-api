@@ -2,12 +2,14 @@ import { Router } from 'express';
 import multer from 'multer';
 
 import { config } from '../../config';
-import { downloadAsset, uploadAssets } from '../../controllers/v1/recordings';
+import { downloadAsset, getRecordingObject, uploadAssets } from '../../controllers/v1/recordings';
 
 /**
  * @since 1.0.0
  */
 const recordingsRouter = Router();
+
+recordingsRouter.get('/:id', getRecordingObject);
 
 recordingsRouter.get('/:id/audio', downloadAsset);
 
