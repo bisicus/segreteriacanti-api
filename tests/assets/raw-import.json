@@ -1,0 +1,34 @@
+[
+  {
+    "titolo": "Allora saprete che esisto",
+    "autori": ["Auguste-Maurice Cocagnac", "Pierick Houdy"],
+    "eventoNome": "esercizi clu 2020",
+    "eventoInizio": "2020-11-08",
+    "eventoFine": "2020-11-10",
+    "momento": "sabato",
+    "gesto": "messa",
+    "valutazione": "Buona"
+  },
+  {
+    "titolo": "Apparirà",
+    "autori": ["Auguste-Maurice Cocagnac", "Pierick Houdy"],
+    "eventoNome": "esercizi clu 2020",
+    "eventoInizio": "2020-11-08",
+    "eventoFine": "2020-11-10",
+    "momento": "domenica",
+    "gesto": "messa",
+    "valutazione": "Oscena",
+    "commento": "male male questa qua"
+  },
+  {
+    "titolo": "Allora saprete che esisto - 2",
+    "autori": ["Auguste-Maurice Cocagnac", "Pierick Houdy"],
+    "eventoNome": "esercizi Pasqua CLU 2022",
+    "eventoInizio": "2022-04-11",
+    "eventoFine": "2022-11-11",
+    "momento": "venerdì",
+    "gesto": "Via Crucis",
+    "valutazione": "Buona",
+    "commento": "coro ok, ma il vento entra nei microfoni"
+  }
+]
