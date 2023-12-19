@@ -1,4 +1,5 @@
 - [Intro](#intro)
+- [Start this project](#start-this-project)
 - [MVC](#mvc)
   - [Model behaviors](#model-behaviors)
     - [soft-delete](#soft-delete)
@@ -9,6 +10,17 @@ This is an API that allows handling recordings for CL SegreteriaCanti.
 
 Recordinds, translations, chords/tab, music sheets are stored in a filesystem.
 This application is encharged to know the exact location of each file
+
+# Start this project
+
+create a .env file starting from [.env-template](./.env-template)
+
+```bash
+docker compose -f ./docker-compose.yaml --env-file ./.env up -d
+npm ci
+npx prima migrate dev
+npm run dev
+```
 
 # MVC
 
