@@ -33,7 +33,7 @@ export const deedToPublic = (deed: GestoConRelazioni): GestoPublic => {
 
   if (Array.isArray(recordings)) {
     deedPublic.recordings = recordings.map((_r) => {
-      logger.trace({ id: deed.id, registrazioneId: _r.id }, "toPublic 'gesto': aggiunta 'registrazione'");
+      logger.trace({ id: deed.id, recording: _r.id }, "toPublic 'deed': add 'recording'");
       return recordingToPublic(_r);
     });
   }

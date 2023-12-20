@@ -33,7 +33,7 @@ export const momentToPublic = (moment: MomentoConRelazioni): MomentoPublic => {
 
   if (Array.isArray(recordings)) {
     momentPublic.recordings = recordings.map((_r) => {
-      logger.trace({ id: moment.id, registrazioneId: _r.id }, "toPublic 'momento': aggiunta 'registrazione'");
+      logger.trace({ id: moment.id, recordingId: _r.id }, "toPublic 'momento': add 'recording'");
       return recordingToPublic(_r);
     });
   }

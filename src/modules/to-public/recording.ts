@@ -44,19 +44,19 @@ export const recordingToPublic = (recording: RegistrazioneConRelazioni): Registr
   const registazionePublic: RegistrazionePublic = _recording;
 
   if (song) {
-    logger.trace({ id: recording.id, cantoId: song.id }, "toPublic 'registrazione': aggiunta 'canto'");
+    logger.trace({ id: recording.id, songId: song.id }, "toPublic 'recording': add 'song'");
     registazionePublic.canto = songToPublic(song);
   }
   if (event) {
-    logger.trace({ id: recording.id, eventoId: event.id }, "toPublic 'registrazione': aggiunta 'evento'");
+    logger.trace({ id: recording.id, eventId: event.id }, "toPublic 'recording': add 'event'");
     registazionePublic.evento = eventToPublic(event);
   }
   if (deed) {
-    logger.trace({ id: recording.id, gestoId: deed.id }, "toPublic 'registrazione': aggiunta 'gesto'");
+    logger.trace({ id: recording.id, deedId: deed.id }, "toPublic 'recording': add 'deed'");
     registazionePublic.gesto = deedToPublic(deed);
   }
   if (moment) {
-    logger.trace({ id: recording.id, momentoId: moment.id }, "toPublic 'registrazione': aggiunta 'momento'");
+    logger.trace({ id: recording.id, momentId: moment.id }, "toPublic 'recording': add 'moment'");
     registazionePublic.momento = momentToPublic(moment);
   }
 

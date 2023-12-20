@@ -33,7 +33,7 @@ export const authorToPublic = (author: AutoreConRelazioni): AutorePublic => {
 
   if (songs) {
     authorPublic.songs = songs.map((_c) => {
-      logger.trace({ id: author.id, cantoId: _c.id }, "toPublic 'autore': aggiunta 'registrazione'");
+      logger.trace({ id: author.id, songId: _c.id }, "toPublic 'author': add 'song'");
       return songToPublic(_c);
     });
   }

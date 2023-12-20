@@ -56,7 +56,7 @@ export const getRecordingFile = async (recordingId: number) => {
   }
   const filepath = path.join(config.storage.recordings, DbRecording.refAudio);
   if (fs.existsSync(filepath) === false) {
-    logger.fatal({ path: filepath, recordingId: recordingId }, 'il file non esiste nel Filesystem');
+    logger.fatal({ path: filepath, recordingId: recordingId }, 'non-existent file');
     throw new BaseError('not-found', 'file not available', StatusCodes.INTERNAL_SERVER_ERROR);
   }
 
@@ -72,7 +72,7 @@ export const getRecordingFile = async (recordingId: number) => {
  * @todo implementare un "Cestino delle registrazioni?"
  */
 export const linkUploadedFile = async (recordingId: number, file: Express.Multer.File): Promise<Recording> => {
-  logger.debug({ filename: file.filename, mime: file.mimetype, recordId: recordingId }, 'gestione del file per la registrazione');
+  logger.debug({ filename: file.filename, mime: file.mimetype, recordId: recordingId }, 'handling file for recording');
 
   const DbRecordingWithRelated: RegistrazioneConTitoloCanto | null = await db.recording.findUnique({
     where: {
@@ -95,23 +95,23 @@ export const linkUploadedFile = async (recordingId: number, file: Express.Multer
   const _fileName = forgeFilename(DbRecordingWithRelated);
   const _fileExtension = extension(file.mimetype);
   const filePath = `${_fileName}.${_fileExtension}`;
-  logger.debug({ path: filePath, recordId: recordingId }, 'nuovo path per il file');
+  logger.debug({ path: filePath, recordId: recordingId }, 'new filepath');
 
   // Muovi il file nella cartella delle registrazioni
   const _destinationPath = path.join(config.storage.recordings, filePath);
-  logger.debug({ oldPath: file.path, newPath: _destinationPath, recordId: recordingId }, 'sostituzione file');
+  logger.debug({ oldPath: file.path, newPath: _destinationPath, recordId: recordingId }, 'file replacement');
 
   try {
     await fs.move(file.path, _destinationPath, { overwrite: true });
   } catch (err) {
-    logger.error({ err: err, oldPath: file.path, newPath: _destinationPath, recordId: recordingId }, 'impossibile sostituire il file');
+    logger.error({ err: err, oldPath: file.path, newPath: _destinationPath, recordId: recordingId }, 'FAILED: file replacement');
     throw err;
   }
 
   // aggiorna il modell
   let recordingUpdated: Recording;
   if (filePath !== DbRecordingWithRelated.refAudio) {
-    logger.info({ oldRef: DbRecordingWithRelated.refAudio, newRef: filePath, recordId: recordingId }, 'sostituzione di audio ref');
+    logger.info({ oldRef: DbRecordingWithRelated.refAudio, newRef: filePath, recordId: recordingId }, 'replacing audio ref');
 
     // trattieni vecchio file
     const oldRef = DbRecordingWithRelated.refAudio;
@@ -125,23 +125,23 @@ export const linkUploadedFile = async (recordingId: number, file: Express.Multer
         refAudio: filePath,
       },
     });
-    logger.debug({ newRef: filePath, recordId: recordingId }, 'audio ref sostituita correttamente');
+    logger.debug({ newRef: filePath, recordId: recordingId }, 'SUCCESS: replace audio ref');
 
     // cancella vecchio file
     if (oldRef) {
       const _removePath = path.join(config.storage.recordings, oldRef);
-      logger.debug({ path: _removePath, recordId: recordingId }, 'rimozione audio ref');
+      logger.debug({ path: _removePath, recordId: recordingId }, 'remove old audio ref');
 
       try {
         await fs.remove(path.join(config.storage.recordings, oldRef));
       } catch (err) {
-        logger.fatal({ err: err, path: _removePath, recordId: recordingId }, 'impossibile rimuovere audio ref');
+        logger.fatal({ err: err, path: _removePath, recordId: recordingId }, 'FAILED: remove old audio ref');
         // non è necessario interrompere il flusso; accumuliamo solo sporcizia.
       }
     }
   } else {
     // riutilizza il modello preso dal DB
-    logger.debug({ ref: DbRecordingWithRelated.refAudio, recordId: recordingId }, 'audio ref non modificata dalla richiesta');
+    logger.debug({ ref: DbRecordingWithRelated.refAudio, recordId: recordingId }, 'audio ref left untouched');
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { song, ..._r } = DbRecordingWithRelated;

@@ -33,7 +33,7 @@ export const eventToPublic = (event: EventoConRelazioni): EventoPublic => {
 
   if (Array.isArray(recordings)) {
     eventPublic.recordings = recordings.map((_r) => {
-      logger.trace({ id: event.id, registrazioneId: _r.id }, "toPublic 'evento': aggiunta 'registrazione'");
+      logger.trace({ id: event.id, recordingId: _r.id }, "toPublic 'event': add 'recording'");
       return recordingToPublic(_r);
     });
   }

@@ -30,23 +30,23 @@ export type CantoPublic = Song &
  * Trasforma il modello 'Canto' nell'interfaccia pubblica. Aggiunge le eventuali relazioni
  * @since 1.0.0
  */
-export const songToPublic = (canto: CantoConRelazioni): CantoPublic => {
+export const songToPublic = (song: CantoConRelazioni): CantoPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { authors, recordings, ..._canto } = canto;
-  const cantoPublic: CantoPublic = _canto;
+  const { authors, recordings, ..._song } = song;
+  const songPublic: CantoPublic = _song;
 
   if (Array.isArray(authors)) {
-    cantoPublic.authors = authors.map((_a) => {
-      logger.trace({ id: canto.id, autoreId: _a.id }, "toPublic 'canto': aggiunta 'autore'");
+    songPublic.authors = authors.map((_a) => {
+      logger.trace({ id: song.id, autoreId: _a.id }, "toPublic 'canto': aggiunta 'autore'");
       return authorToPublic(_a);
     });
   }
   if (Array.isArray(recordings)) {
-    cantoPublic.recordings = recordings.map((_r) => {
-      logger.trace({ id: canto.id, registrazioneId: _r.id }, "toPublic 'canto': aggiunta 'registrazione'");
+    songPublic.recordings = recordings.map((_r) => {
+      logger.trace({ id: song.id, registrazioneId: _r.id }, "toPublic 'canto': aggiunta 'registrazione'");
       return recordingToPublic(_r);
     });
   }
 
-  return cantoPublic;
+  return songPublic;
 };
