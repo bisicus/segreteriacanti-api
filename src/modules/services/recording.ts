@@ -8,8 +8,8 @@ import { config } from '../../config';
 import { BaseError } from '../../errors/BaseError';
 import { db } from '../db';
 import logger from '../logger';
-import type { RegistrazioneConTitoloCanto } from '../models/recordings';
-import { forgeFilename } from '../models/recordings';
+import type { RegistrazioneConTitoloCanto } from '../models/recording';
+import { forgeFilename } from '../models/recording';
 import { registrazioneToPublic } from '../to-public/recording';
 
 /**

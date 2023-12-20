@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
-import { fetchRecordingToPublic, getRecordingFile, linkUploadedFile } from '../../modules/services/recordings';
+import { fetchRecordingToPublic, getRecordingFile, linkUploadedFile } from '../../modules/services/recording';
 
 /**
  * @since 1.0.0
