@@ -2,13 +2,13 @@ import type { Deed, Event, Moment, Recording, Song } from '@prisma/client';
 
 import logger from '../logger';
 import type { GestoPublic } from './deed';
-import { gestoToPublic } from './deed';
+import { deedToPublic } from './deed';
 import type { EventoPublic } from './event';
-import { eventoToPublic } from './event';
+import { eventToPublic } from './event';
 import type { MomentoPublic } from './moment';
-import { momentoToPublic } from './moment';
+import { momentToPublic } from './moment';
 import type { CantoPublic } from './song';
-import { cantoToPublic } from './song';
+import { songToPublic } from './song';
 
 /**
  * input composto da modello con relazioni per trasformare 'Registrazione' nell'interfaccia pubblica
@@ -38,26 +38,26 @@ export type RegistrazionePublic = Omit<Recording, 'deed_id' | 'event_id' | 'mome
  * Trasforma il modello 'Registrazione' nell'interfaccia pubblica. Aggiunge le eventuali relazioni
  * @since 1.0.0
  */
-export const registrazioneToPublic = (registazione: RegistrazioneConRelazioni): RegistrazionePublic => {
+export const recordingToPublic = (recording: RegistrazioneConRelazioni): RegistrazionePublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { deed_id, event_id, moment_id, song_id, song: canto, event: evento, deed: gesto, moment: momento, ..._registrazione } = registazione;
-  const registazionePublic: RegistrazionePublic = _registrazione;
+  const { deed_id, event_id, moment_id, song_id, song, event, deed, moment, ..._recording } = recording;
+  const registazionePublic: RegistrazionePublic = _recording;
 
-  if (canto) {
-    logger.trace({ id: registazione.id, cantoId: canto.id }, "toPublic 'registrazione': aggiunta 'canto'");
-    registazionePublic.canto = cantoToPublic(canto);
+  if (song) {
+    logger.trace({ id: recording.id, cantoId: song.id }, "toPublic 'registrazione': aggiunta 'canto'");
+    registazionePublic.canto = songToPublic(song);
   }
-  if (evento) {
-    logger.trace({ id: registazione.id, eventoId: evento.id }, "toPublic 'registrazione': aggiunta 'evento'");
-    registazionePublic.evento = eventoToPublic(evento);
+  if (event) {
+    logger.trace({ id: recording.id, eventoId: event.id }, "toPublic 'registrazione': aggiunta 'evento'");
+    registazionePublic.evento = eventToPublic(event);
   }
-  if (gesto) {
-    logger.trace({ id: registazione.id, gestoId: gesto.id }, "toPublic 'registrazione': aggiunta 'gesto'");
-    registazionePublic.gesto = gestoToPublic(gesto);
+  if (deed) {
+    logger.trace({ id: recording.id, gestoId: deed.id }, "toPublic 'registrazione': aggiunta 'gesto'");
+    registazionePublic.gesto = deedToPublic(deed);
   }
-  if (momento) {
-    logger.trace({ id: registazione.id, momentoId: momento.id }, "toPublic 'registrazione': aggiunta 'momento'");
-    registazionePublic.momento = momentoToPublic(momento);
+  if (moment) {
+    logger.trace({ id: recording.id, momentoId: moment.id }, "toPublic 'registrazione': aggiunta 'momento'");
+    registazionePublic.momento = momentToPublic(moment);
   }
 
   return registazionePublic;

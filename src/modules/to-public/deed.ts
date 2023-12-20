@@ -2,7 +2,7 @@ import type { Deed, Recording } from '@prisma/client';
 
 import logger from '../logger';
 import type { RegistrazionePublic } from './recording';
-import { registrazioneToPublic } from './recording';
+import { recordingToPublic } from './recording';
 
 /**
  * input composto da modello con relazioni per trasformare 'Gesto' nell'interfaccia pubblica
@@ -19,24 +19,24 @@ export type GestoConRelazioni = Deed &
  */
 export type GestoPublic = Deed &
   Partial<{
-    registrazioni: RegistrazionePublic[];
+    recordings: RegistrazionePublic[];
   }>;
 
 /**
  * Trasforma il modello 'Gesto' nell'interfaccia pubblica. Aggiunge le eventuali relazioni
  * @since 1.0.0
  */
-export const gestoToPublic = (gesto: GestoConRelazioni): GestoPublic => {
+export const deedToPublic = (deed: GestoConRelazioni): GestoPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { recordings: registrazioni, ..._gesto } = gesto;
-  const gestoPublic: GestoPublic = _gesto;
+  const { recordings, ..._deed } = deed;
+  const deedPublic: GestoPublic = _deed;
 
-  if (Array.isArray(registrazioni)) {
-    gestoPublic.registrazioni = registrazioni.map((_r) => {
-      logger.trace({ id: gesto.id, registrazioneId: _r.id }, "toPublic 'gesto': aggiunta 'registrazione'");
-      return registrazioneToPublic(_r);
+  if (Array.isArray(recordings)) {
+    deedPublic.recordings = recordings.map((_r) => {
+      logger.trace({ id: deed.id, registrazioneId: _r.id }, "toPublic 'gesto': aggiunta 'registrazione'");
+      return recordingToPublic(_r);
     });
   }
 
-  return gestoPublic;
+  return deedPublic;
 };

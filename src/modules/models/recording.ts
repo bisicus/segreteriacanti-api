@@ -14,14 +14,14 @@ export type RegistrazioneConTitoloCanto = Recording & { song: null | { title: So
  * @since 1.0.0
  * @todo sanificare `canto.nome`
  */
-export const forgeFilename = (registrazione: RegistrazioneConTitoloCanto) => {
+export const forgeFilename = (recording: RegistrazioneConTitoloCanto) => {
   let fileRef: string;
 
-  if (registrazione.refAudio) {
-    fileRef = registrazione.refAudio;
+  if (recording.refAudio) {
+    fileRef = recording.refAudio;
   } else {
-    if (registrazione.song) {
-      fileRef = registrazione.song.title;
+    if (recording.song) {
+      fileRef = recording.song.title;
     } else {
       fileRef = uuidv4();
     }
