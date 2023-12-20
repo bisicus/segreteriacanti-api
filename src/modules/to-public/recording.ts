@@ -1,14 +1,14 @@
 import type { Deed, Event, Moment, Recording, Song } from '@prisma/client';
 
 import logger from '../logger';
-import type { CantoPublic } from './canto';
-import { cantoToPublic } from './canto';
-import type { EventoPublic } from './evento';
-import { eventoToPublic } from './evento';
-import type { GestoPublic } from './gesto';
-import { gestoToPublic } from './gesto';
-import type { MomentoPublic } from './momento';
-import { momentoToPublic } from './momento';
+import type { GestoPublic } from './deed';
+import { gestoToPublic } from './deed';
+import type { EventoPublic } from './event';
+import { eventoToPublic } from './event';
+import type { MomentoPublic } from './moment';
+import { momentoToPublic } from './moment';
+import type { CantoPublic } from './song';
+import { cantoToPublic } from './song';
 
 /**
  * input composto da modello con relazioni per trasformare 'Registrazione' nell'interfaccia pubblica

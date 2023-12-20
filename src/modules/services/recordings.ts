@@ -10,7 +10,7 @@ import { db } from '../db';
 import logger from '../logger';
 import type { RegistrazioneConTitoloCanto } from '../models/recordings';
 import { forgeFilename } from '../models/recordings';
-import { registrazioneToPublic } from '../to-public/registrazione';
+import { registrazioneToPublic } from '../to-public/recording';
 
 /**
  * Ritorna l'oggetto che descrive una registrazione. Allega eventualmente le entità relazionate.

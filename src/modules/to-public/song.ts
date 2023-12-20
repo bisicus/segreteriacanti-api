@@ -1,10 +1,10 @@
 import type { Author, Recording, Song } from '@prisma/client';
 
 import logger from '../logger';
-import type { AutorePublic } from './autore';
-import { autoreToPublic } from './autore';
-import type { RegistrazionePublic } from './registrazione';
-import { registrazioneToPublic } from './registrazione';
+import type { AutorePublic } from './author';
+import { autoreToPublic } from './author';
+import type { RegistrazionePublic } from './recording';
+import { registrazioneToPublic } from './recording';
 
 /**
  * input composto da modello con relazioni per trasformare 'Canto' nell'interfaccia pubblica

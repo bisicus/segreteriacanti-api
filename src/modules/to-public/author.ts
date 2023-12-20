@@ -1,8 +1,8 @@
 import type { Author, Song } from '@prisma/client';
 
 import logger from '../logger';
-import type { CantoPublic } from './canto';
-import { cantoToPublic } from './canto';
+import type { CantoPublic } from './song';
+import { cantoToPublic } from './song';
 
 /**
  * input composto da modello con relazioni per trasformare 'Autore' nell'interfaccia pubblica

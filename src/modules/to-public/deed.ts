@@ -1,8 +1,8 @@
 import type { Deed, Recording } from '@prisma/client';
 
 import logger from '../logger';
-import type { RegistrazionePublic } from './registrazione';
-import { registrazioneToPublic } from './registrazione';
+import type { RegistrazionePublic } from './recording';
+import { registrazioneToPublic } from './recording';
 
 /**
  * input composto da modello con relazioni per trasformare 'Gesto' nell'interfaccia pubblica
