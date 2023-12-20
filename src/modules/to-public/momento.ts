@@ -1,4 +1,4 @@
-import type { Momento, Registrazione } from '@prisma/client';
+import type { Moment, Recording } from '@prisma/client';
 
 import logger from '../logger';
 import type { RegistrazionePublic } from './registrazione';
@@ -8,16 +8,16 @@ import { registrazioneToPublic } from './registrazione';
  * input composto da modello con relazioni per trasformare 'Momento' nell'interfaccia pubblica
  * @since 1.0.0
  */
-export type MomentoConRelazioni = Momento &
+export type MomentoConRelazioni = Moment &
   Partial<{
-    registrazioni: Registrazione[];
+    recordings: Recording[];
   }>;
 
 /**
  * interfaccia pubblica per 'Momento'
  * @since 1.0.0
  */
-export type MomentoPublic = Momento &
+export type MomentoPublic = Moment &
   Partial<{
     registrazioni: RegistrazionePublic[];
   }>;
@@ -28,7 +28,7 @@ export type MomentoPublic = Momento &
  */
 export const momentoToPublic = (momento: MomentoConRelazioni): MomentoPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { registrazioni, ..._momento } = momento;
+  const { recordings: registrazioni, ..._momento } = momento;
   const momentoPublic: MomentoPublic = _momento;
 
   if (Array.isArray(registrazioni)) {

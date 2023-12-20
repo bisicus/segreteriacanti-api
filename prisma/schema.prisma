@@ -10,32 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// @since 1.0.0
-model Canto {
-  id            Int             @id @default(autoincrement())
-  nome          String
-  // filesystem reference
-  refTesto      String?
-  // filesystem reference
-  refSpartito   String?
-  // filesystem reference
-  refAccordi    String?
-  /// --- RELATIONS --- ///
-  autori        Autore[]
-  registrazioni Registrazione[]
-  /// --- SYSTEM PROPERTIES --- ///
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  deletedAt     DateTime?
-  createdBy     Int?
-  updatedBy     Int?
-}
-
-model Autore {
+model Author {
   id        Int       @id @default(autoincrement())
-  nome      String
+  name      String
   /// --- RELATIONS --- ///
-  canti     Canto[]
+  songs     Song[]
   /// --- SYSTEM PROPERTIES --- ///
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -45,69 +24,90 @@ model Autore {
 }
 
 /// @since 1.0.0
-model Registrazione {
-  id          Int       @id @default(autoincrement())
-  valutazione String?
-  commento    String?
-  canto_id    Int?      @map("_canto_id")
-  evento_id   Int?      @map("_evento_id")
-  gesto_id    Int?      @map("_gesto_id")
-  momento_id  Int?      @map("_momento_id")
+model Deed {
+  id         Int         @id @default(autoincrement())
+  type       String
+  /// --- RELATIONS --- ///
+  recordings Recording[]
+  /// --- SYSTEM PROPERTIES --- ///
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
+  createdBy  Int?
+  updatedBy  Int?
+}
+
+/// @since 1.0.0
+model Event {
+  id         Int         @id @default(autoincrement())
+  name       String
+  startDate  DateTime    @db.Date
+  endDate    DateTime    @db.Date
+  /// --- RELATIONS --- ///
+  recordings Recording[]
+  /// --- SYSTEM PROPERTIES --- ///
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
+  createdBy  Int?
+  updatedBy  Int?
+}
+
+/// @since 1.0.0
+model Moment {
+  id         Int         @id @default(autoincrement())
+  occurredOn String
+  /// --- RELATIONS --- ///
+  recordings Recording[]
+  /// --- SYSTEM PROPERTIES --- ///
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
+  createdBy  Int?
+  updatedBy  Int?
+}
+
+/// @since 1.0.0
+model Recording {
+  id         Int       @id @default(autoincrement())
+  evaluation String?
+  comment    String?
+  deed_id    Int?      @map("_deed_id")
+  event_id   Int?      @map("_event_id")
+  moment_id  Int?      @map("_moment_id")
+  song_id    Int?      @map("_song_id")
   // filesystem reference
-  refAudio    String?
+  refAudio   String?
   /// --- RELATIONS --- ///
-  canto       Canto?    @relation(fields: [canto_id], references: [id])
-  evento      Evento?   @relation(fields: [evento_id], references: [id])
-  gesto       Gesto?    @relation(fields: [gesto_id], references: [id])
-  momento     Momento?  @relation(fields: [momento_id], references: [id])
+  deed       Deed?     @relation(fields: [deed_id], references: [id])
+  event      Event?    @relation(fields: [event_id], references: [id])
+  moment     Moment?   @relation(fields: [moment_id], references: [id])
+  song       Song?     @relation(fields: [song_id], references: [id])
   /// --- SYSTEM PROPERTIES --- ///
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-  createdBy   Int?
-  updatedBy   Int?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  createdBy  Int?
+  updatedBy  Int?
 }
 
 /// @since 1.0.0
-model Evento {
-  id            Int             @id @default(autoincrement())
-  nome          String
-  dataInizio    DateTime        @db.Date
-  dataFine      DateTime        @db.Date
+model Song {
+  id           Int         @id @default(autoincrement())
+  title        String
+  // filesystem reference
+  refLyrics    String?
+  // filesystem reference
+  refScore     String?
+  // filesystem reference
+  refTablature String?
   /// --- RELATIONS --- ///
-  Registrazioni Registrazione[]
+  authors      Author[]
+  recordings   Recording[]
   /// --- SYSTEM PROPERTIES --- ///
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  deletedAt     DateTime?
-  createdBy     Int?
-  updatedBy     Int?
-}
-
-/// @since 1.0.0
-model Gesto {
-  id            Int             @id @default(autoincrement())
-  tipo          String
-  /// --- RELATIONS --- ///
-  registrazioni Registrazione[]
-  /// --- SYSTEM PROPERTIES --- ///
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  deletedAt     DateTime?
-  createdBy     Int?
-  updatedBy     Int?
-}
-
-/// @since 1.0.0
-model Momento {
-  id            Int             @id @default(autoincrement())
-  quando        String
-  /// --- RELATIONS --- ///
-  registrazioni Registrazione[]
-  /// --- SYSTEM PROPERTIES --- ///
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  deletedAt     DateTime?
-  createdBy     Int?
-  updatedBy     Int?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime?
+  createdBy    Int?
+  updatedBy    Int?
 }

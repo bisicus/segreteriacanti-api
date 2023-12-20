@@ -1,4 +1,4 @@
-import type { Registrazione } from '@prisma/client';
+import type { Recording } from '@prisma/client';
 import fs from 'fs-extra';
 import { StatusCodes } from 'http-status-codes';
 import { extension } from 'mime-types';
@@ -17,15 +17,15 @@ import { registrazioneToPublic } from '../to-public/registrazione';
  * @since 1.0.0
  */
 export const fetchRecordingToPublic = async (recordingId: number) => {
-  const DBRegistrazione = await db.registrazione.findUnique({
+  const DBRegistrazione = await db.recording.findUnique({
     where: {
       id: recordingId,
     },
     include: {
-      canto: true,
-      evento: true,
-      gesto: true,
-      momento: true,
+      deed: true,
+      event: true,
+      moment: true,
+      song: true,
     },
   });
   if (!DBRegistrazione) {
@@ -42,7 +42,7 @@ export const fetchRecordingToPublic = async (recordingId: number) => {
  * @todo dare un nome al file che non `refAudio`
  */
 export const getRecordingFile = async (recordingId: number) => {
-  const DBRegistrazione = await db.registrazione.findUnique({
+  const DBRegistrazione = await db.recording.findUnique({
     where: {
       id: recordingId,
     },
@@ -71,17 +71,17 @@ export const getRecordingFile = async (recordingId: number) => {
  * @todo se update in DB non funziona elimina il nuovo file
  * @todo implementare un "Cestino delle registrazioni?"
  */
-export const linkUploadedFile = async (recordingId: number, file: Express.Multer.File): Promise<Registrazione> => {
+export const linkUploadedFile = async (recordingId: number, file: Express.Multer.File): Promise<Recording> => {
   logger.debug({ filename: file.filename, mime: file.mimetype, recordId: recordingId }, 'gestione del file per la registrazione');
 
-  const DBRegistrazioneConTitolo: RegistrazioneConTitoloCanto | null = await db.registrazione.findUnique({
+  const DBRegistrazioneConTitolo: RegistrazioneConTitoloCanto | null = await db.recording.findUnique({
     where: {
       id: recordingId,
     },
     include: {
-      canto: {
+      song: {
         select: {
-          nome: true,
+          title: true,
         },
       },
     },
@@ -109,7 +109,7 @@ export const linkUploadedFile = async (recordingId: number, file: Express.Multer
   }
 
   // aggiorna il modell
-  let registrazioneUpdated: Registrazione;
+  let registrazioneUpdated: Recording;
   if (filePath !== DBRegistrazioneConTitolo.refAudio) {
     logger.info({ oldRef: DBRegistrazioneConTitolo.refAudio, newRef: filePath, recordId: recordingId }, 'sostituzione di audio ref');
 
@@ -117,7 +117,7 @@ export const linkUploadedFile = async (recordingId: number, file: Express.Multer
     const oldRef = DBRegistrazioneConTitolo.refAudio;
 
     // aggiorna modello
-    registrazioneUpdated = await db.registrazione.update({
+    registrazioneUpdated = await db.recording.update({
       where: {
         id: recordingId,
       },
@@ -144,7 +144,7 @@ export const linkUploadedFile = async (recordingId: number, file: Express.Multer
     logger.debug({ ref: DBRegistrazioneConTitolo.refAudio, recordId: recordingId }, 'audio ref non modificata dalla richiesta');
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { canto, ..._r } = DBRegistrazioneConTitolo;
+    const { song: canto, ..._r } = DBRegistrazioneConTitolo;
     registrazioneUpdated = _r;
   }
 

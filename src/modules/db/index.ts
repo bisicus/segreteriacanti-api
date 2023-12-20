@@ -21,12 +21,12 @@ export const db =
   }).$extends(
     createSoftDeleteExtension({
       models: {
-        Canto: true,
-        Autore: true,
-        Registrazione: true,
-        Evento: true,
-        Gesto: true,
-        Momento: true,
+        Author: true,
+        Deed: true,
+        Event: true,
+        Moment: true,
+        Recording: true,
+        Song: true,
       },
       defaultConfig: {
         field: 'deletedAt',

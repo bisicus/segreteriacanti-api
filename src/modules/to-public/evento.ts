@@ -1,4 +1,4 @@
-import type { Evento, Registrazione } from '@prisma/client';
+import type { Event, Recording } from '@prisma/client';
 
 import logger from '../logger';
 import type { RegistrazionePublic } from './registrazione';
@@ -8,16 +8,16 @@ import { registrazioneToPublic } from './registrazione';
  * input composto da modello con relazioni per trasformare 'Evento' nell'interfaccia pubblica
  * @since 1.0.0
  */
-export type EventoConRelazioni = Evento &
+export type EventoConRelazioni = Event &
   Partial<{
-    registrazioni: Registrazione[];
+    recordings: Recording[];
   }>;
 
 /**
  * interfaccia pubblica per 'Evento'
  * @since 1.0.0
  */
-export type EventoPublic = Evento &
+export type EventoPublic = Event &
   Partial<{
     registrazioni: RegistrazionePublic[];
   }>;
@@ -28,7 +28,7 @@ export type EventoPublic = Evento &
  */
 export const eventoToPublic = (evento: EventoConRelazioni): EventoPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { registrazioni, ..._evento } = evento;
+  const { recordings: registrazioni, ..._evento } = evento;
   const eventoPublic: EventoPublic = _evento;
 
   if (Array.isArray(registrazioni)) {

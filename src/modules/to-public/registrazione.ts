@@ -1,4 +1,4 @@
-import type { Canto, Evento, Gesto, Momento, Registrazione } from '@prisma/client';
+import type { Deed, Event, Moment, Recording, Song } from '@prisma/client';
 
 import logger from '../logger';
 import type { CantoPublic } from './canto';
@@ -14,19 +14,19 @@ import { momentoToPublic } from './momento';
  * input composto da modello con relazioni per trasformare 'Registrazione' nell'interfaccia pubblica
  * @since 1.0.0
  */
-export type RegistrazioneConRelazioni = Registrazione &
+export type RegistrazioneConRelazioni = Recording &
   Partial<{
-    canto: Canto | null;
-    evento: Evento | null;
-    gesto: Gesto | null;
-    momento: Momento | null;
+    deed: Deed | null;
+    event: Event | null;
+    moment: Moment | null;
+    song: Song | null;
   }>;
 
 /**
  * interfaccia pubblica per 'Registrazione'
  * @since 1.0.0
  */
-export type RegistrazionePublic = Omit<Registrazione, 'canto_id' | 'evento_id' | 'gesto_id' | 'momento_id'> &
+export type RegistrazionePublic = Omit<Recording, 'deed_id' | 'event_id' | 'moment_id' | 'song_id'> &
   Partial<{
     canto: CantoPublic;
     evento: EventoPublic;
@@ -40,7 +40,7 @@ export type RegistrazionePublic = Omit<Registrazione, 'canto_id' | 'evento_id' |
  */
 export const registrazioneToPublic = (registazione: RegistrazioneConRelazioni): RegistrazionePublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { canto_id, evento_id, gesto_id, momento_id, canto, evento, gesto, momento, ..._registrazione } = registazione;
+  const { deed_id, event_id, moment_id, song_id, song: canto, event: evento, deed: gesto, moment: momento, ..._registrazione } = registazione;
   const registazionePublic: RegistrazionePublic = _registrazione;
 
   if (canto) {
