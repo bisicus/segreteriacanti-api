@@ -1,14 +1,14 @@
 import type { Deed, Recording } from '@prisma/client';
 
 import logger from '../logger';
-import type { RegistrazionePublic } from './recording';
+import type { RecordingPublic } from './recording';
 import { recordingToPublic } from './recording';
 
 /**
  * input composto da modello con relazioni per trasformare 'Gesto' nell'interfaccia pubblica
  * @since 1.0.0
  */
-export type GestoConRelazioni = Deed &
+export type DeedConRelazioni = Deed &
   Partial<{
     recordings: Recording[];
   }>;
@@ -17,19 +17,19 @@ export type GestoConRelazioni = Deed &
  * interfaccia pubblica per 'Gesto'
  * @since 1.0.0
  */
-export type GestoPublic = Deed &
+export type DeedPublic = Deed &
   Partial<{
-    recordings: RegistrazionePublic[];
+    recordings: RecordingPublic[];
   }>;
 
 /**
  * Trasforma il modello 'Gesto' nell'interfaccia pubblica. Aggiunge le eventuali relazioni
  * @since 1.0.0
  */
-export const deedToPublic = (deed: GestoConRelazioni): GestoPublic => {
+export const deedToPublic = (deed: DeedConRelazioni): DeedPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { recordings, ..._deed } = deed;
-  const deedPublic: GestoPublic = _deed;
+  const deedPublic: DeedPublic = _deed;
 
   if (Array.isArray(recordings)) {
     deedPublic.recordings = recordings.map((_r) => {

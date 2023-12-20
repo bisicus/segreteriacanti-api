@@ -1,14 +1,14 @@
 import type { Moment, Recording } from '@prisma/client';
 
 import logger from '../logger';
-import type { RegistrazionePublic } from './recording';
+import type { RecordingPublic } from './recording';
 import { recordingToPublic } from './recording';
 
 /**
  * input composto da modello con relazioni per trasformare 'Momento' nell'interfaccia pubblica
  * @since 1.0.0
  */
-export type MomentoConRelazioni = Moment &
+export type MomentWithRelated = Moment &
   Partial<{
     recordings: Recording[];
   }>;
@@ -17,19 +17,19 @@ export type MomentoConRelazioni = Moment &
  * interfaccia pubblica per 'Momento'
  * @since 1.0.0
  */
-export type MomentoPublic = Moment &
+export type MomentPublic = Moment &
   Partial<{
-    recordings: RegistrazionePublic[];
+    recordings: RecordingPublic[];
   }>;
 
 /**
  * Trasforma il modello 'Momento' nell'interfaccia pubblica. Aggiunge le eventuali relazioni
  * @since 1.0.0
  */
-export const momentToPublic = (moment: MomentoConRelazioni): MomentoPublic => {
+export const momentToPublic = (moment: MomentWithRelated): MomentPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { recordings, ..._moment } = moment;
-  const momentPublic: MomentoPublic = _moment;
+  const momentPublic: MomentPublic = _moment;
 
   if (Array.isArray(recordings)) {
     momentPublic.recordings = recordings.map((_r) => {

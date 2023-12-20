@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 /**
  * @since 1.0.0
  */
-export type RegistrazioneConTitoloCanto = Recording & { song: null | { title: Song['title'] } };
+export type RecordingWithTitle = Recording & { song: null | { title: Song['title'] } };
 
 /**
  * Crea un nome univoco per la ref del file
@@ -14,7 +14,7 @@ export type RegistrazioneConTitoloCanto = Recording & { song: null | { title: So
  * @since 1.0.0
  * @todo sanificare `canto.nome`
  */
-export const forgeFilename = (recording: RegistrazioneConTitoloCanto) => {
+export const forgeFilename = (recording: RecordingWithTitle) => {
   let fileRef: string;
 
   if (recording.refAudio) {

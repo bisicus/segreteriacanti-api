@@ -1,16 +1,16 @@
 import type { Author, Recording, Song } from '@prisma/client';
 
 import logger from '../logger';
-import type { AutorePublic } from './author';
+import type { AuthorPublic } from './author';
 import { authorToPublic } from './author';
-import type { RegistrazionePublic } from './recording';
+import type { RecordingPublic } from './recording';
 import { recordingToPublic } from './recording';
 
 /**
  * input composto da modello con relazioni per trasformare 'Canto' nell'interfaccia pubblica
  * @since 1.0.0
  */
-export type CantoConRelazioni = Song &
+export type SongWithRelated = Song &
   Partial<{
     authors: Author[];
     recordings: Recording[];
@@ -20,20 +20,20 @@ export type CantoConRelazioni = Song &
  * interfaccia pubblica per 'Canto'
  * @since 1.0.0
  */
-export type CantoPublic = Song &
+export type SongPublic = Song &
   Partial<{
-    authors: AutorePublic[];
-    recordings: RegistrazionePublic[];
+    authors: AuthorPublic[];
+    recordings: RecordingPublic[];
   }>;
 
 /**
  * Trasforma il modello 'Canto' nell'interfaccia pubblica. Aggiunge le eventuali relazioni
  * @since 1.0.0
  */
-export const songToPublic = (song: CantoConRelazioni): CantoPublic => {
+export const songToPublic = (song: SongWithRelated): SongPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { authors, recordings, ..._song } = song;
-  const songPublic: CantoPublic = _song;
+  const songPublic: SongPublic = _song;
 
   if (Array.isArray(authors)) {
     songPublic.authors = authors.map((_a) => {

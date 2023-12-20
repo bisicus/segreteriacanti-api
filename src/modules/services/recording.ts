@@ -8,7 +8,7 @@ import { config } from '../../config';
 import { BaseError } from '../../errors/BaseError';
 import { db } from '../db';
 import logger from '../logger';
-import type { RegistrazioneConTitoloCanto } from '../models/recording';
+import type { RecordingWithTitle } from '../models/recording';
 import { forgeFilename } from '../models/recording';
 import { recordingToPublic } from '../to-public/recording';
 
@@ -74,7 +74,7 @@ export const getRecordingFile = async (recordingId: number) => {
 export const linkUploadedFile = async (recordingId: number, file: Express.Multer.File): Promise<Recording> => {
   logger.debug({ filename: file.filename, mime: file.mimetype, recordId: recordingId }, 'handling file for recording');
 
-  const DbRecordingWithRelated: RegistrazioneConTitoloCanto | null = await db.recording.findUnique({
+  const DbRecordingWithRelated: RecordingWithTitle | null = await db.recording.findUnique({
     where: {
       id: recordingId,
     },
