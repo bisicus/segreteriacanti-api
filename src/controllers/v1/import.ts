@@ -20,9 +20,9 @@ export const importData: RequestHandler = async (req, res, next) => {
       throw new BaseError('validation', 'invalid input', StatusCodes.BAD_REQUEST);
     }
 
-    const newRegistrazioni = await importRecords(req.body);
+    const newRecordings = await importRecords(req.body);
 
-    res.status(StatusCodes.CREATED).json(newRegistrazioni);
+    res.status(StatusCodes.CREATED).json(newRecordings);
   } catch (error) {
     next(error);
   }

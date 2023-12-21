@@ -1,4 +1,4 @@
-import type { Autore, Evento, Gesto, Momento, Registrazione } from '@prisma/client';
+import type { Author, Deed, Event, Moment, Recording } from '@prisma/client';
 import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 import { StatusCodes } from 'http-status-codes';
 
@@ -42,93 +42,93 @@ export type RecordImport = {
 export const importRecords = async (importDescriptor: RecordImport[]) => {
   try {
     // MAIN VARIABLES
-    const registrazioni: Registrazione[] = [];
+    const recordings: Recording[] = [];
 
     // ----- PRELIMINARI ----- //
-    const { DBCanti, DBAutori, DBEventi, DBGesti, DBMomenti } = await _fetchImportExistentResources(importDescriptor);
+    const { DbAuthors, DbDeeds, DbEvents, DbMoments, DbSongs } = await _fetchImportExistentResources(importDescriptor);
 
     // ----- CREAZIONE RISORSE A PARTIRE DALL'IMPORT REGISTRAZIONI ----- //
     for (const importRow of importDescriptor) {
       // CANTO E AUTORI
-      let relatedDbCanto = DBCanti.find((_c) => _c.nome === importRow.titolo);
-      if (relatedDbCanto) {
-        logger.debug({ titolo: importRow.titolo }, 'canto già esistente, verrà relazionato alla registrazione');
+      let relatedDbSong = DbSongs.find((_c) => _c.title === importRow.titolo);
+      if (relatedDbSong) {
+        logger.debug({ title: importRow.titolo }, 'already existing song to assign to recording');
       } else {
-        logger.info({ titolo: importRow.titolo }, 'creazione canto');
+        logger.info({ title: importRow.titolo }, "CREATE: 'song'");
 
         // cerca tra gli autori ed eventualmente creali
-        const autoriDaRelazionare: Autore[] = [];
-        for (const autoreNeedle of importRow.autori) {
-          const _relatedDbAutore = DBAutori.find((_a) => _a.nome === autoreNeedle);
+        const authorsToRelate: Author[] = [];
+        for (const authorNeedle of importRow.autori) {
+          const _relatedDbAuthor = DbAuthors.find((_a) => _a.name === authorNeedle);
 
-          if (_relatedDbAutore) {
-            logger.debug({ autore: autoreNeedle, titolo: importRow.titolo }, 'autore già esistente, verrà relazionato al canto');
-            autoriDaRelazionare.push(_relatedDbAutore);
+          if (_relatedDbAuthor) {
+            logger.debug({ author: authorNeedle, titolo: importRow.titolo }, 'already existing author to assign to song');
+            authorsToRelate.push(_relatedDbAuthor);
           } else {
-            logger.debug({ autore: autoreNeedle }, 'creazione autore');
-            const _newAutore = await db.autore.create({
+            logger.debug({ author: authorNeedle }, "CREATING: 'Author'");
+            const _newAuthor = await db.author.create({
               data: {
-                nome: autoreNeedle,
+                name: authorNeedle,
                 createdBy: -1,
                 updatedBy: -1,
               },
             });
-            logger.info({ nome: _newAutore.nome, id: _newAutore.id }, 'CREATE: autore');
-            autoriDaRelazionare.push(_newAutore);
+            logger.info({ name: _newAuthor.name, id: _newAuthor.id }, "CREATE: 'author'");
+            authorsToRelate.push(_newAuthor);
 
             // il nuovo autore potrebbe essere utile per successivi import. Evito una nuova query
-            logger.debug({ autore: autoreNeedle }, 'aggiungo autore alla lista dei presenti del DB');
-            DBAutori.push(_newAutore);
+            logger.debug({ author: authorNeedle }, 'add author to list fetch from DB');
+            DbAuthors.push(_newAuthor);
           }
         }
 
         // creazione canto
-        relatedDbCanto = await db.canto.create({
+        relatedDbSong = await db.song.create({
           data: {
-            nome: importRow.titolo,
-            autori: {
-              connect: autoriDaRelazionare,
+            title: importRow.titolo,
+            authors: {
+              connect: authorsToRelate,
             },
           },
         });
-        logger.info({ nome: relatedDbCanto.nome, id: relatedDbCanto.id }, 'CREATE: canto');
+        logger.info({ name: relatedDbSong.title, id: relatedDbSong.id }, "CREATE: 'song'");
       }
 
       // EVENTO, GESTO, MOMENTO
-      const [evento, gesto, momento] = await Promise.all([
-        _findOrCreateEvento(importRow, DBEventi),
-        _findOrCreateGesto(importRow, DBGesti),
-        _findOrCreateMomento(importRow, DBMomenti),
+      const [deed, event, moment] = await Promise.all([
+        _findOrCreateDeed(importRow, DbDeeds),
+        _findOrCreateEvent(importRow, DbEvents),
+        _findOrCreateMoment(importRow, DbMoments),
       ]);
 
       // REGISTRAZIONE
-      logger.debug({ titolo: importRow.titolo }, 'creazione registrazione per canto');
-      const newRegistrazione = await db.registrazione.create({
+      logger.debug({ title: importRow.titolo }, "CREATING: 'recording' for 'song'");
+      const newRecording = await db.recording.create({
         data: {
-          commento: importRow.commento ?? null,
-          valutazione: importRow.valutazione,
-          canto: {
-            connect: relatedDbCanto,
+          comment: importRow.commento ?? null,
+          evaluation: importRow.valutazione,
+          song: {
+            connect: relatedDbSong,
           },
-          evento: {
-            connect: evento,
+          event: {
+            connect: event,
           },
-          gesto: {
-            connect: gesto,
+          deed: {
+            connect: deed,
           },
-          momento: {
-            connect: momento,
+          moment: {
+            connect: moment,
           },
           createdBy: -1,
           updatedBy: -1,
         },
       });
-      logger.info({ id: newRegistrazione.id }, 'CREATE: registrazione');
+      logger.info({ id: newRecording.id }, "CREATE: 'recording'");
 
-      registrazioni.push(newRegistrazione);
+      recordings.push(newRecording);
     }
 
-    return registrazioni;
+    return recordings;
   } catch (err) {
     if (err instanceof PrismaClientValidationError) {
       throw new BaseError(err.name, err.message, StatusCodes.INTERNAL_SERVER_ERROR);
@@ -147,61 +147,61 @@ export const importRecords = async (importDescriptor: RecordImport[]) => {
  * @todo valutare sostituzione 'in' clause con 'in like' clause
  */
 const _fetchImportExistentResources = async (importDescriptor: RecordImport[]) => {
-  const importAutori = [...new Set(importDescriptor.flatMap((record) => record.autori))];
-  const importCanti = importDescriptor.map((record) => record.titolo);
-  const importGesti = [...new Set(importDescriptor.map((record) => record.gesto))];
-  const importEventi = [...new Set(importDescriptor.map((record) => record.eventoNome))];
-  const importMomenti = [...new Set(importDescriptor.map((record) => record.momento))];
+  const importAuthors = [...new Set(importDescriptor.flatMap((record) => record.autori))];
+  const importDeeds = [...new Set(importDescriptor.map((record) => record.gesto))];
+  const importEvents = [...new Set(importDescriptor.map((record) => record.eventoNome))];
+  const importMoments = [...new Set(importDescriptor.map((record) => record.momento))];
+  const importSongs = importDescriptor.map((record) => record.titolo);
 
-  const [DBAutori, DBCanti, DBEventi, DBGesti, DBMomenti] = await Promise.all([
+  const [DbAuthors, DbDeeds, DbEvents, DbMoments, DbSongs] = await Promise.all([
     // cerca autori già caricati
-    db.autore.findMany({
+    db.author.findMany({
       where: {
-        nome: {
-          in: importAutori,
-        },
-      },
-    }),
-    // cerca canti già caricati
-    db.canto.findMany({
-      where: {
-        nome: {
-          in: importCanti,
-        },
-      },
-    }),
-    // cerca eventi già caricati
-    db.evento.findMany({
-      where: {
-        nome: {
-          in: importEventi,
+        name: {
+          in: importAuthors,
         },
       },
     }),
     // cerca gesti già caricati
-    db.gesto.findMany({
+    db.deed.findMany({
       where: {
-        tipo: {
-          in: importGesti,
+        type: {
+          in: importDeeds,
+        },
+      },
+    }),
+    // cerca eventi già caricati
+    db.event.findMany({
+      where: {
+        name: {
+          in: importEvents,
         },
       },
     }),
     // cerca momenti già caricati
-    db.momento.findMany({
+    db.moment.findMany({
       where: {
-        quando: {
-          in: importMomenti,
+        occurredOn: {
+          in: importMoments,
+        },
+      },
+    }),
+    // cerca canti già caricati
+    db.song.findMany({
+      where: {
+        title: {
+          in: importSongs,
         },
       },
     }),
   ]);
 
   return {
-    DBAutori,
-    DBCanti,
-    DBEventi,
-    DBGesti,
-    DBMomenti,
+    DbAuthors,
+    DbDeeds,
+    DbEvents,
+    DbMoments,
+    DbSongs,
   };
 };
 
@@ -212,29 +212,29 @@ const _fetchImportExistentResources = async (importDescriptor: RecordImport[]) =
  * @todo sostituire `logger` generico con 'requestLogger' usando `moduleAssets`
  * @todo valutare se eventoInizio e eventoFine possono essere opzionali nel modello
  */
-const _findOrCreateEvento = async (importRow: RecordImport, DBEventi: Evento[]) => {
-  let relatedDbEvento = DBEventi.find((_e) => _e.nome === importRow.eventoNome);
-  if (relatedDbEvento) {
-    logger.debug({ titolo: importRow.titolo }, 'evento già esistente, verrà relazionato alla registrazione');
+const _findOrCreateEvent = async (importRow: RecordImport, DbEvents: Event[]) => {
+  let relatedDbEvent = DbEvents.find((_e) => _e.name === importRow.eventoNome);
+  if (relatedDbEvent) {
+    logger.debug({ title: importRow.titolo }, 'already existing event to assign to recording');
   } else {
     // creazione evento
-    logger.debug({ titolo: importRow.titolo }, 'creazione evento');
-    relatedDbEvento = await db.evento.create({
+    logger.debug({ title: importRow.titolo }, "CREATING: 'event'");
+    relatedDbEvent = await db.event.create({
       data: {
-        nome: importRow.eventoNome,
-        dataInizio: importRow.eventoInizio ? new Date(importRow.eventoInizio) : new Date(),
-        dataFine: importRow.eventoFine ? new Date(importRow.eventoFine) : new Date(),
+        name: importRow.eventoNome,
+        startDate: importRow.eventoInizio ? new Date(importRow.eventoInizio) : new Date(),
+        endDate: importRow.eventoFine ? new Date(importRow.eventoFine) : new Date(),
         createdBy: -1,
         updatedBy: -1,
       },
     });
-    logger.info({ nome: relatedDbEvento.nome, id: relatedDbEvento.id }, 'CREATE: evento');
+    logger.info({ name: relatedDbEvent.name, id: relatedDbEvent.id }, "CREATE: 'event'");
 
-    logger.debug({ autore: relatedDbEvento.nome }, 'aggiungo autore alla lista dei presenti del DB');
-    DBEventi.push(relatedDbEvento);
+    logger.debug({ event: relatedDbEvent.name }, 'add event to list fetch from DB');
+    DbEvents.push(relatedDbEvent);
   }
 
-  return relatedDbEvento;
+  return relatedDbEvent;
 };
 
 /**
@@ -243,27 +243,27 @@ const _findOrCreateEvento = async (importRow: RecordImport, DBEventi: Evento[]) 
  * @todo sostituire i `-1` di `createdBy` e `updatedBy` con la sessione attiva
  * @todo sostituire `logger` generico con 'requestLogger' usando `moduleAssets`
  */
-const _findOrCreateGesto = async (importRow: RecordImport, DBGesti: Gesto[]) => {
-  let relatedDbGesto = DBGesti.find((_g) => _g.tipo === importRow.gesto);
-  if (relatedDbGesto) {
-    logger.debug({ titolo: importRow.titolo }, 'evento già esistente, verrà relazionato alla registrazione');
+const _findOrCreateDeed = async (importRow: RecordImport, DbDeeds: Deed[]) => {
+  let relatedDbDeed = DbDeeds.find((_g) => _g.type === importRow.gesto);
+  if (relatedDbDeed) {
+    logger.debug({ type: importRow.gesto }, 'already existing deed to assign to recording');
   } else {
     // creazione evento
-    logger.debug({ titolo: importRow.titolo }, 'creazione evento');
-    relatedDbGesto = await db.gesto.create({
+    logger.debug({ type: importRow.gesto }, "CREATING: 'deed'");
+    relatedDbDeed = await db.deed.create({
       data: {
-        tipo: importRow.gesto,
+        type: importRow.gesto,
         createdBy: -1,
         updatedBy: -1,
       },
     });
-    logger.info({ tipo: relatedDbGesto.tipo, id: relatedDbGesto.id }, 'CREATE: evento');
+    logger.info({ tipo: relatedDbDeed.type, id: relatedDbDeed.id }, "CREATE: 'deed'");
 
-    logger.debug({ titolo: importRow.titolo }, 'aggiungo autore alla lista dei presenti del DB');
-    DBGesti.push(relatedDbGesto);
+    logger.debug({ name: importRow.gesto }, 'add deed to list fetch from DB');
+    DbDeeds.push(relatedDbDeed);
   }
 
-  return relatedDbGesto;
+  return relatedDbDeed;
 };
 
 /**
@@ -272,24 +272,24 @@ const _findOrCreateGesto = async (importRow: RecordImport, DBGesti: Gesto[]) => 
  * @todo sostituire i `-1` di `createdBy` e `updatedBy` con la sessione attiva
  * @todo sostituire `logger` generico con 'requestLogger' usando `moduleAssets`
  */
-const _findOrCreateMomento = async (importRow: RecordImport, DBMomenti: Momento[]) => {
-  let relatedDbMomento = DBMomenti.find((_m) => _m.quando === importRow.momento);
-  if (relatedDbMomento) {
-    logger.debug({ titolo: importRow.titolo }, 'momento già esistente, verrà relazionato alla registrazione');
+const _findOrCreateMoment = async (importRow: RecordImport, DbMoments: Moment[]) => {
+  let relatedDbMoment = DbMoments.find((_m) => _m.occurredOn === importRow.momento);
+  if (relatedDbMoment) {
+    logger.debug({ occurredOn: importRow.momento }, 'already existing moment to assign to recording');
   } else {
     // creazione momento
-    logger.debug({ titolo: importRow.titolo }, 'creazione momento');
-    relatedDbMomento = await db.momento.create({
+    logger.debug({ occurredOn: importRow.momento }, "CREATING: 'moment'");
+    relatedDbMoment = await db.moment.create({
       data: {
-        quando: importRow.momento,
+        occurredOn: importRow.momento,
         createdBy: -1,
         updatedBy: -1,
       },
     });
-    logger.info({ quando: relatedDbMomento.quando, id: relatedDbMomento.id }, 'CREATE: momento');
+    logger.info({ occurredOn: relatedDbMoment.occurredOn, id: relatedDbMoment.id }, "CREATE: 'moment'");
 
-    logger.debug({ titolo: importRow.titolo }, 'aggiungo autore alla lista dei presenti del DB');
-    DBMomenti.push(relatedDbMomento);
+    logger.debug({ occurredOn: importRow.momento }, 'add momento to list fetch from DB');
+    DbMoments.push(relatedDbMoment);
   }
-  return relatedDbMomento;
+  return relatedDbMoment;
 };

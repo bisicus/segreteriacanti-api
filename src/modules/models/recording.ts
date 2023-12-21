@@ -1,10 +1,10 @@
-import type { Canto, Registrazione } from '@prisma/client';
+import type { Recording, Song } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
  * @since 1.0.0
  */
-export type RegistrazioneConTitoloCanto = Registrazione & { canto: null | { nome: Canto['nome'] } };
+export type RecordingWithTitle = Recording & { song: null | { title: Song['title'] } };
 
 /**
  * Crea un nome univoco per la ref del file
@@ -14,14 +14,14 @@ export type RegistrazioneConTitoloCanto = Registrazione & { canto: null | { nome
  * @since 1.0.0
  * @todo sanificare `canto.nome`
  */
-export const forgeFilename = (registrazione: RegistrazioneConTitoloCanto) => {
+export const forgeFilename = (recording: RecordingWithTitle) => {
   let fileRef: string;
 
-  if (registrazione.refAudio) {
-    fileRef = registrazione.refAudio;
+  if (recording.refAudio) {
+    fileRef = recording.refAudio;
   } else {
-    if (registrazione.canto) {
-      fileRef = registrazione.canto.nome;
+    if (recording.song) {
+      fileRef = recording.song.title;
     } else {
       fileRef = uuidv4();
     }
