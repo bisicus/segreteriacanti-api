@@ -6,8 +6,9 @@ class BaseError extends Error {
   public readonly statusCode: number;
   public readonly description: string;
   public readonly isTrustedError: boolean;
+  public readonly detailsObject: object | null;
 
-  constructor(name: string, description: string, statusCode: number) {
+  constructor(name: string, description: string, statusCode: number, details?: object) {
     super(description);
     Object.setPrototypeOf(this, new.target.prototype);
 
@@ -15,6 +16,7 @@ class BaseError extends Error {
     this.statusCode = statusCode;
     this.description = description;
     this.isTrustedError = true;
+    this.detailsObject = details ?? null;
     Error.captureStackTrace(this);
   }
 }

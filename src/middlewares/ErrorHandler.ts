@@ -22,10 +22,11 @@ export const errorHandler = (error: Error, req: Request, res: Response, _next: N
 
   let status = 500; //default value
   const message = error.message;
-  const details: object | null = null;
+  let details: object | null = null;
 
   if (error instanceof BaseError) {
     status = error.statusCode;
+    details = error.detailsObject;
   }
   res.status(status).json({
     message: message,
