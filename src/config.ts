@@ -37,6 +37,12 @@ export const config = {
         audio: ['audio/mpeg', 'audio/mp4', 'audio/vnd.wav'],
       },
     },
+    import: {
+      csv: {
+        delimiters: [';', ','],
+        arraySeparator: '..',
+      },
+    },
   },
 
   logging: {
