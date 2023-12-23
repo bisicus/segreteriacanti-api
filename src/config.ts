@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import mime from 'mime';
 import path from 'path';
 import type { Level } from 'pino';
 
@@ -35,6 +36,7 @@ export const config = {
     uploads: {
       acceptedMime: {
         audio: ['audio/mpeg', 'audio/mp4', 'audio/vnd.wav'],
+        import: [mime.lookup('csv')],
       },
     },
     import: {
