@@ -11,6 +11,8 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
+  "rewrap.autoWrap.enabled": true,
+  "rewrap.wrappingColumn": 150, // match prettier.printWidth
   "typescript.suggest.completeJSDocs": false,
   "typescript.suggest.jsdoc.generateReturns": false,
   "[yaml]": {

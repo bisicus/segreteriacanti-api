@@ -1,3 +1,10 @@
 {
-  "recommendations": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "rvest.vs-code-prettier-eslint", "redhat.vscode-yaml", "prisma.prisma"]
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "rvest.vs-code-prettier-eslint",
+    "redhat.vscode-yaml",
+    "prisma.prisma",
+    "stkb.rewrap"
+  ]
 }
