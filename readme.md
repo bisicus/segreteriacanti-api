@@ -1,8 +1,10 @@
 - [Intro](#intro)
 - [Start this project](#start-this-project)
-- [MVC](#mvc)
-  - [Model behaviors](#model-behaviors)
-    - [soft-delete](#soft-delete)
+- [Application](#application)
+  - [MVC](#mvc)
+    - [Model behaviors](#model-behaviors)
+      - [soft-delete](#soft-delete)
+  - [Validation](#validation)
 
 # Intro
 
@@ -22,7 +24,9 @@ npx prima migrate dev
 npm run dev
 ```
 
-# MVC
+# Application
+
+## MVC
 
 Main pattern is [Model-Control-View](https://www.geeksforgeeks.org/mvc-design-pattern/)
 
@@ -30,12 +34,21 @@ Main pattern is [Model-Control-View](https://www.geeksforgeeks.org/mvc-design-pa
 - Controller: TBD
 - View: JSON responses
 
-## Model behaviors
+### Model behaviors
 
-### soft-delete
+#### soft-delete
 
 Soft-delete pattern to avoid resource deletion
 Behavior is exploited via [`prisma` soft-delete extension](https://github.com/olivierwilkinson/prisma-extension-soft-delete/tree/v1.0.0)
 Model presenting soft-delete behavior presents one of the following columns:
 
 - `deleteAt` - TIMESTAMP
+
+## Validation
+
+Validation is guaranteed by mean of [`zod`](https://github.com/colinhacks/zod/tree/v3.22.4)
+
+Validation can be coded on two levels:
+
+- `express` level, using [requestValidation](./src/middlewares/validation.ts) middleware
+- `application` level, usually in controllers
