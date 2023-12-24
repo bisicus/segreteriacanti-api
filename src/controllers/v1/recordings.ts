@@ -6,17 +6,9 @@ import { fetchRecordingToPublic, getRecordingFile, linkUploadedFile } from '../.
 
 /**
  * @since 1.0.0
- * @todo spostare validazione in middleware precedente (valutare `express-validator` o `zod`)
  */
 export const getRecordingObject: RequestHandler = async (req, res, next) => {
   try {
-    if (!req.params['id']) {
-      throw new BaseError('validation', 'missing field', StatusCodes.BAD_REQUEST);
-    }
-    if (Number.isNaN(Number(req.params['id']))) {
-      throw new BaseError('validation', "invalid value for field 'id'", StatusCodes.BAD_REQUEST);
-    }
-
     const recording = await fetchRecordingToPublic(Number(req.params['id']));
 
     res.status(StatusCodes.OK).json(recording);
@@ -30,13 +22,6 @@ export const getRecordingObject: RequestHandler = async (req, res, next) => {
  */
 export const downloadAsset: RequestHandler = async (req, res, next) => {
   try {
-    if (!req.params['id']) {
-      throw new BaseError('validation', 'missing field', StatusCodes.BAD_REQUEST);
-    }
-    if (Number.isNaN(Number(req.params['id']))) {
-      throw new BaseError('validation', "invalid value for field 'id'", StatusCodes.BAD_REQUEST);
-    }
-
     const { filepath, filename } = await getRecordingFile(Number(req.params['id']));
 
     res.download(filepath, filename); // Set content-disposition and send file.
@@ -53,12 +38,6 @@ export const uploadAssets: RequestHandler = async (req, res, next) => {
     // validation
     if (!req.file) {
       throw new BaseError('validation', 'missing file', StatusCodes.BAD_REQUEST);
-    }
-    if (!req.params['id']) {
-      throw new BaseError('validation', 'missing field', StatusCodes.BAD_REQUEST);
-    }
-    if (Number.isNaN(Number(req.params['id']))) {
-      throw new BaseError('validation', "invalid value for field 'id'", StatusCodes.BAD_REQUEST);
     }
 
     const registrazioneUpdated = await linkUploadedFile(Number(req.params['id']), req.file);
