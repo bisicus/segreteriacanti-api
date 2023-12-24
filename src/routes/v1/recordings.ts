@@ -1,23 +1,47 @@
 import { Router } from 'express';
 import multer from 'multer';
+import { z } from 'zod';
 
 import { config } from '../../config';
 import { downloadAsset, getRecordingObject, uploadAssets } from '../../controllers/v1/recordings';
+import requestValidation from '../../middlewares/validation';
+import { IDValidator } from '../../validators/common';
 
 /**
  * @since 1.0.0
  */
 const recordingsRouter = Router();
 
-recordingsRouter.get('/:id', getRecordingObject);
+recordingsRouter.get(
+  '/:id',
+  requestValidation({
+    params: z.object({
+      id: IDValidator(),
+    }),
+  }),
+  getRecordingObject
+);
 
-recordingsRouter.get('/:id/audio', downloadAsset);
+recordingsRouter.get(
+  '/:id/audio',
+  requestValidation({
+    params: z.object({
+      id: IDValidator(),
+    }),
+  }),
+  downloadAsset
+);
 
 /**
  * @todo spostare `fileFilter` in file separato
  */
 recordingsRouter.post(
   '/:id/assets',
+  requestValidation({
+    params: z.object({
+      id: IDValidator(),
+    }),
+  }),
   multer({
     storage: multer.diskStorage({
       destination: config.storage.tmp,

@@ -4,12 +4,13 @@ import { StatusCodes } from 'http-status-codes';
 import { BaseError } from '../../errors/BaseError';
 import { requestCsvToImportJson } from '../../modules/request-helper/import';
 import { importRecords } from '../../modules/services/import';
+import { validate } from '../../modules/validate';
+import { schemaRecordImportList } from '../../validators';
 
 /**
  * Data injestion of several entities.
  * Input is an object array; each array element has the same structure.
  * @since 1.0.0
- * @todo validation of every element of the array (evaluate `express-validator` or `zod`)
  * @todo support XLSX import
  * @todo localization
  * @todo replace BaseError with more specific error
@@ -17,10 +18,7 @@ import { importRecords } from '../../modules/services/import';
 export const importData: RequestHandler = async (req, res, next) => {
   try {
     let importObject;
-    if (Object.keys(req.body).length) {
-      if (Array.isArray(req.body) === false) {
-        throw new BaseError('validation', 'invalid input', StatusCodes.BAD_REQUEST);
-      }
+    if (Object.keys(req.body).length !== 0) {
       importObject = req.body;
     } else if (req.file) {
       importObject = await requestCsvToImportJson(req.file);
@@ -28,7 +26,10 @@ export const importData: RequestHandler = async (req, res, next) => {
       throw new BaseError('validation', 'missing input', StatusCodes.BAD_REQUEST);
     }
 
-    const newRecordings = await importRecords(importObject);
+    // validation
+    const validated = validate(importObject, schemaRecordImportList);
+
+    const newRecordings = await importRecords(validated);
 
     res.status(StatusCodes.CREATED).json(newRecordings);
   } catch (error) {

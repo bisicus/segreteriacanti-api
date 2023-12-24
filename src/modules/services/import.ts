@@ -3,23 +3,9 @@ import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
+import type { SchemaRecordImport, SchemaRecordImportList } from '../../validators';
 import { db } from '../db';
 import logger from '../logger';
-
-/**
- * @since 1.0.0
- */
-export type RecordImport = {
-  autori: string[];
-  eventoNome: string;
-  eventoInizio?: string;
-  eventoFine?: string;
-  gesto: string;
-  momento: string;
-  titolo: string;
-  valutazione: string;
-  commento?: string;
-};
 
 /**
  * Flusso
@@ -39,7 +25,7 @@ export type RecordImport = {
  * @todo validazione: può essere che la registrazione già esista; trovare un modo per sgamare i duplicati
  * @todo wrapper per PrismaError
  */
-export const importRecords = async (importDescriptor: RecordImport[]) => {
+export const importRecords = async (importDescriptor: SchemaRecordImportList) => {
   try {
     // MAIN VARIABLES
     const recordings: Recording[] = [];
@@ -146,7 +132,7 @@ export const importRecords = async (importDescriptor: RecordImport[]) => {
  * @todo supportare 'gesto', 'evento', 'momento' come `null` o stringa vuota
  * @todo valutare sostituzione 'in' clause con 'in like' clause
  */
-const _fetchImportExistentResources = async (importDescriptor: RecordImport[]) => {
+const _fetchImportExistentResources = async (importDescriptor: SchemaRecordImportList) => {
   const importAuthors = [...new Set(importDescriptor.flatMap((record) => record.autori))];
   const importDeeds = [...new Set(importDescriptor.map((record) => record.gesto))];
   const importEvents = [...new Set(importDescriptor.map((record) => record.eventoNome))];
@@ -212,7 +198,7 @@ const _fetchImportExistentResources = async (importDescriptor: RecordImport[]) =
  * @todo sostituire `logger` generico con 'requestLogger' usando `moduleAssets`
  * @todo valutare se eventoInizio e eventoFine possono essere opzionali nel modello
  */
-const _findOrCreateEvent = async (importRow: RecordImport, DbEvents: Event[]) => {
+const _findOrCreateEvent = async (importRow: SchemaRecordImport, DbEvents: Event[]) => {
   let relatedDbEvent = DbEvents.find((_e) => _e.name === importRow.eventoNome);
   if (relatedDbEvent) {
     logger.debug({ title: importRow.titolo }, 'already existing event to assign to recording');
@@ -243,7 +229,7 @@ const _findOrCreateEvent = async (importRow: RecordImport, DbEvents: Event[]) =>
  * @todo sostituire i `-1` di `createdBy` e `updatedBy` con la sessione attiva
  * @todo sostituire `logger` generico con 'requestLogger' usando `moduleAssets`
  */
-const _findOrCreateDeed = async (importRow: RecordImport, DbDeeds: Deed[]) => {
+const _findOrCreateDeed = async (importRow: SchemaRecordImport, DbDeeds: Deed[]) => {
   let relatedDbDeed = DbDeeds.find((_g) => _g.type === importRow.gesto);
   if (relatedDbDeed) {
     logger.debug({ type: importRow.gesto }, 'already existing deed to assign to recording');
@@ -272,7 +258,7 @@ const _findOrCreateDeed = async (importRow: RecordImport, DbDeeds: Deed[]) => {
  * @todo sostituire i `-1` di `createdBy` e `updatedBy` con la sessione attiva
  * @todo sostituire `logger` generico con 'requestLogger' usando `moduleAssets`
  */
-const _findOrCreateMoment = async (importRow: RecordImport, DbMoments: Moment[]) => {
+const _findOrCreateMoment = async (importRow: SchemaRecordImport, DbMoments: Moment[]) => {
   let relatedDbMoment = DbMoments.find((_m) => _m.occurredOn === importRow.momento);
   if (relatedDbMoment) {
     logger.debug({ occurredOn: importRow.momento }, 'already existing moment to assign to recording');
