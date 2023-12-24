@@ -14,7 +14,7 @@ const DEFAULT_ERROR_MESSAGE = 'validation error';
  * @see ZodError
  */
 class ValidationError extends BaseError {
-  constructor(validationError: object) {
+  constructor(validationError: unknown) {
     if (validationError instanceof ZodError) {
       super(DEFAULT_ERROR_NAME, validationError.message, StatusCodes.BAD_REQUEST, validationError.errors);
     } else if (validationError instanceof Error) {
