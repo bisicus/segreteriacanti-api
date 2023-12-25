@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 
-import type { ChildLoggerBinding } from '../modules/logger';
+import type { ChildLoggerBinding, Logger } from '../modules/logger';
 import logger from '../modules/logger';
 
 export type RequestLoggerOptions = {
@@ -41,6 +41,6 @@ export default function requestLogger(options: RequestLoggerOptions = {}) {
 
 declare module 'express-serve-static-core' {
   export interface Request {
-    logger: typeof logger;
+    logger: Logger;
   }
 }
