@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import moduleAssets from '../../middlewares/moduleAssets';
 import { importRouter } from './import';
 import { recordingsRouter } from './recordings';
 
@@ -9,7 +10,7 @@ import { recordingsRouter } from './recordings';
 const v1Routes = Router();
 
 // load general middlewares for this router
-// v1Routes.use(middlewareFunction());
+v1Routes.use(moduleAssets());
 
 // load nested routers or endpoints
 v1Routes.use('/import', importRouter);
