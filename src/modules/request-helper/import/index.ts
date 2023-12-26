@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { config } from '../../../config';
 import { BaseError } from '../../../errors/BaseError';
-import logger from '../../logger';
+import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 
 ///////////////////////
 /////   OPTIONS   /////
@@ -33,11 +33,10 @@ const _optionDefaultCsv: Required<OptionsCsvToJson> = {
  * -----
  * Multer is supported to exploit `file.buffer` as it's already in memory. This avoid expensive I/O operations.
  * @since 1.0.0
- * @todo replace `logger` with 'requestLogger' using `moduleAssets`
  * @todo replace BaseError with more specific error
  * @todo library allows for nested using _dot_ to create nested objects
  */
-export async function requestCsvToImportJson(csvFile: Express.Multer.File | string, options?: OptionsCsvToJson) {
+export async function requestCsvToImportJson(moduleAssets: ModuleAssets, csvFile: Express.Multer.File | string, options?: OptionsCsvToJson) {
   try {
     // load options
     const _options = { ..._optionDefaultCsv, ...options };
@@ -76,7 +75,7 @@ export async function requestCsvToImportJson(csvFile: Express.Multer.File | stri
 
     return parsedCsv;
   } catch (err) {
-    logger.error(err);
+    moduleAssets.logger.error(err);
     throw new BaseError('conversionError', 'error in CSV parsing', StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }

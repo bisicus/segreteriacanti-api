@@ -6,8 +6,8 @@ import path from 'path';
 
 import { config } from '../../config';
 import { BaseError } from '../../errors/BaseError';
+import type { ModuleAssets } from '../../middlewares/moduleAssets';
 import { db } from '../db';
-import logger from '../logger';
 import type { RecordingWithTitle } from '../models/recording';
 import { forgeFilename } from '../models/recording';
 import { recordingToPublic } from '../to-public/recording';
@@ -16,7 +16,7 @@ import { recordingToPublic } from '../to-public/recording';
  * Ritorna l'oggetto che descrive una registrazione. Allega eventualmente le entità relazionate.
  * @since 1.0.0
  */
-export const fetchRecordingToPublic = async (recordingId: number) => {
+export const fetchRecordingToPublic = async (moduleAssets: ModuleAssets, recordingId: number) => {
   const DbRecording = await db.recording.findUnique({
     where: {
       id: recordingId,
@@ -33,7 +33,7 @@ export const fetchRecordingToPublic = async (recordingId: number) => {
   }
 
   // Interfaccia pubblica
-  return recordingToPublic(DbRecording);
+  return recordingToPublic(moduleAssets, DbRecording);
 };
 
 /**
@@ -41,7 +41,7 @@ export const fetchRecordingToPublic = async (recordingId: number) => {
  * @todo controllare che il contenuto del file sia un audio
  * @todo dare un nome al file che non `refAudio`
  */
-export const getRecordingFile = async (recordingId: number) => {
+export const getRecordingFile = async (moduleAssets: ModuleAssets, recordingId: number) => {
   const DbRecording = await db.recording.findUnique({
     where: {
       id: recordingId,
@@ -56,7 +56,7 @@ export const getRecordingFile = async (recordingId: number) => {
   }
   const filepath = path.join(config.storage.recordings, DbRecording.refAudio);
   if (fs.existsSync(filepath) === false) {
-    logger.fatal({ path: filepath, recordingId: recordingId }, 'non-existent file');
+    moduleAssets.logger.fatal({ path: filepath, recordingId: recordingId }, 'non-existent file');
     throw new BaseError('not-found', 'file not available', StatusCodes.INTERNAL_SERVER_ERROR);
   }
 
@@ -71,8 +71,8 @@ export const getRecordingFile = async (recordingId: number) => {
  * @todo se update in DB non funziona elimina il nuovo file
  * @todo implementare un "Cestino delle registrazioni?"
  */
-export const linkUploadedFile = async (recordingId: number, file: Express.Multer.File): Promise<Recording> => {
-  logger.debug({ filename: file.filename, mime: file.mimetype, recordId: recordingId }, 'handling file for recording');
+export const linkUploadedFile = async (moduleAssets: ModuleAssets, recordingId: number, file: Express.Multer.File): Promise<Recording> => {
+  moduleAssets.logger.debug({ filename: file.filename, mime: file.mimetype, recordId: recordingId }, 'handling file for recording');
 
   const DbRecordingWithRelated: RecordingWithTitle | null = await db.recording.findUnique({
     where: {
@@ -95,23 +95,23 @@ export const linkUploadedFile = async (recordingId: number, file: Express.Multer
   const _fileName = forgeFilename(DbRecordingWithRelated);
   const _fileExtension = extension(file.mimetype);
   const filePath = `${_fileName}.${_fileExtension}`;
-  logger.debug({ path: filePath, recordId: recordingId }, 'new filepath');
+  moduleAssets.logger.debug({ path: filePath, recordId: recordingId }, 'new filepath');
 
   // Muovi il file nella cartella delle registrazioni
   const _destinationPath = path.join(config.storage.recordings, filePath);
-  logger.debug({ oldPath: file.path, newPath: _destinationPath, recordId: recordingId }, 'file replacement');
+  moduleAssets.logger.debug({ oldPath: file.path, newPath: _destinationPath, recordId: recordingId }, 'file replacement');
 
   try {
     await fs.move(file.path, _destinationPath, { overwrite: true });
   } catch (err) {
-    logger.error({ err: err, oldPath: file.path, newPath: _destinationPath, recordId: recordingId }, 'FAILED: file replacement');
+    moduleAssets.logger.error({ err: err, oldPath: file.path, newPath: _destinationPath, recordId: recordingId }, 'FAILED: file replacement');
     throw err;
   }
 
   // aggiorna il modell
   let recordingUpdated: Recording;
   if (filePath !== DbRecordingWithRelated.refAudio) {
-    logger.info({ oldRef: DbRecordingWithRelated.refAudio, newRef: filePath, recordId: recordingId }, 'replacing audio ref');
+    moduleAssets.logger.info({ oldRef: DbRecordingWithRelated.refAudio, newRef: filePath, recordId: recordingId }, 'replacing audio ref');
 
     // trattieni vecchio file
     const oldRef = DbRecordingWithRelated.refAudio;
@@ -125,23 +125,23 @@ export const linkUploadedFile = async (recordingId: number, file: Express.Multer
         refAudio: filePath,
       },
     });
-    logger.debug({ newRef: filePath, recordId: recordingId }, 'SUCCESS: replace audio ref');
+    moduleAssets.logger.debug({ newRef: filePath, recordId: recordingId }, 'SUCCESS: replace audio ref');
 
     // cancella vecchio file
     if (oldRef) {
       const _removePath = path.join(config.storage.recordings, oldRef);
-      logger.debug({ path: _removePath, recordId: recordingId }, 'remove old audio ref');
+      moduleAssets.logger.debug({ path: _removePath, recordId: recordingId }, 'remove old audio ref');
 
       try {
         await fs.remove(path.join(config.storage.recordings, oldRef));
       } catch (err) {
-        logger.fatal({ err: err, path: _removePath, recordId: recordingId }, 'FAILED: remove old audio ref');
+        moduleAssets.logger.fatal({ err: err, path: _removePath, recordId: recordingId }, 'FAILED: remove old audio ref');
         // non è necessario interrompere il flusso; accumuliamo solo sporcizia.
       }
     }
   } else {
     // riutilizza il modello preso dal DB
-    logger.debug({ ref: DbRecordingWithRelated.refAudio, recordId: recordingId }, 'audio ref left untouched');
+    moduleAssets.logger.debug({ ref: DbRecordingWithRelated.refAudio, recordId: recordingId }, 'audio ref left untouched');
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { song, ..._r } = DbRecordingWithRelated;

@@ -1,5 +1,6 @@
 import type { Deed, Recording } from '@prisma/client';
 
+import type { ModuleAssets } from '../../middlewares/moduleAssets';
 import logger from '../logger';
 import type { RecordingPublic } from './recording';
 import { recordingToPublic } from './recording';
@@ -26,15 +27,15 @@ export type DeedPublic = Deed &
  * Trasforma il modello 'Gesto' nell'interfaccia pubblica. Aggiunge le eventuali relazioni
  * @since 1.0.0
  */
-export const deedToPublic = (deed: DeedConRelazioni): DeedPublic => {
+export const deedToPublic = (moduleAssets: ModuleAssets, deed: DeedConRelazioni): DeedPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { recordings, ..._deed } = deed;
   const deedPublic: DeedPublic = _deed;
 
   if (Array.isArray(recordings)) {
     deedPublic.recordings = recordings.map((_r) => {
-      logger.trace({ id: deed.id, recording: _r.id }, "toPublic 'deed': add 'recording'");
-      return recordingToPublic(_r);
+      moduleAssets.logger.trace({ id: deed.id, recording: _r.id }, "toPublic 'deed': add 'recording'");
+      return recordingToPublic(moduleAssets, _r);
     });
   }
 

@@ -21,15 +21,15 @@ export const importData: RequestHandler = async (req, res, next) => {
     if (Object.keys(req.body).length !== 0) {
       importObject = req.body;
     } else if (req.file) {
-      importObject = await requestCsvToImportJson(req.file);
+      importObject = await requestCsvToImportJson(req.assets, req.file);
     } else {
       throw new BaseError('validation', 'missing input', StatusCodes.BAD_REQUEST);
     }
 
     // validation
-    const validated = validate(importObject, schemaRecordImportList);
+    const validated = validate(req.assets, importObject, schemaRecordImportList);
 
-    const newRecordings = await importRecords(validated);
+    const newRecordings = await importRecords(req.assets, validated);
 
     res.status(StatusCodes.CREATED).json(newRecordings);
   } catch (error) {
