@@ -3,9 +3,9 @@ import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
+import type { ModuleAssets } from '../../middlewares/moduleAssets';
 import type { SchemaRecordImport, SchemaRecordImportList } from '../../validators';
 import { db } from '../db';
-import logger from '../logger';
 
 /**
  * Flusso
@@ -20,12 +20,10 @@ import logger from '../logger';
  * @since 1.0.0
  * @todo si può ottimizzare con `createMany`
  * @todo TRANSAZIONI
- * @todo sostituire i `-1` di `createdBy` e `updatedBy` con la sessione attiva
- * @todo sostituire `logger` generico con 'requestLogger' usando `moduleAssets`
  * @todo validazione: può essere che la registrazione già esista; trovare un modo per sgamare i duplicati
  * @todo wrapper per PrismaError
  */
-export const importRecords = async (importDescriptor: SchemaRecordImportList) => {
+export const importRecords = async (moduleAssets: ModuleAssets, importDescriptor: SchemaRecordImportList) => {
   try {
     // MAIN VARIABLES
     const recordings: Recording[] = [];
@@ -38,9 +36,9 @@ export const importRecords = async (importDescriptor: SchemaRecordImportList) =>
       // CANTO E AUTORI
       let relatedDbSong = DbSongs.find((_c) => _c.title === importRow.titolo);
       if (relatedDbSong) {
-        logger.debug({ title: importRow.titolo }, 'already existing song to assign to recording');
+        moduleAssets.logger.debug({ title: importRow.titolo }, 'already existing song to assign to recording');
       } else {
-        logger.info({ title: importRow.titolo }, "CREATE: 'song'");
+        moduleAssets.logger.info({ title: importRow.titolo }, "CREATE: 'song'");
 
         // cerca tra gli autori ed eventualmente creali
         const authorsToRelate: Author[] = [];
@@ -48,22 +46,22 @@ export const importRecords = async (importDescriptor: SchemaRecordImportList) =>
           const _relatedDbAuthor = DbAuthors.find((_a) => _a.name === authorNeedle);
 
           if (_relatedDbAuthor) {
-            logger.debug({ author: authorNeedle, titolo: importRow.titolo }, 'already existing author to assign to song');
+            moduleAssets.logger.debug({ author: authorNeedle, titolo: importRow.titolo }, 'already existing author to assign to song');
             authorsToRelate.push(_relatedDbAuthor);
           } else {
-            logger.debug({ author: authorNeedle }, "CREATING: 'Author'");
+            moduleAssets.logger.debug({ author: authorNeedle }, "CREATING: 'Author'");
             const _newAuthor = await db.author.create({
               data: {
                 name: authorNeedle,
-                createdBy: -1,
-                updatedBy: -1,
+                createdBy: moduleAssets.sessionId,
+                updatedBy: moduleAssets.sessionId,
               },
             });
-            logger.info({ name: _newAuthor.name, id: _newAuthor.id }, "CREATE: 'author'");
+            moduleAssets.logger.info({ name: _newAuthor.name, id: _newAuthor.id }, "CREATE: 'author'");
             authorsToRelate.push(_newAuthor);
 
             // il nuovo autore potrebbe essere utile per successivi import. Evito una nuova query
-            logger.debug({ author: authorNeedle }, 'add author to list fetch from DB');
+            moduleAssets.logger.debug({ author: authorNeedle }, 'add author to list fetch from DB');
             DbAuthors.push(_newAuthor);
           }
         }
@@ -77,18 +75,18 @@ export const importRecords = async (importDescriptor: SchemaRecordImportList) =>
             },
           },
         });
-        logger.info({ name: relatedDbSong.title, id: relatedDbSong.id }, "CREATE: 'song'");
+        moduleAssets.logger.info({ name: relatedDbSong.title, id: relatedDbSong.id }, "CREATE: 'song'");
       }
 
       // EVENTO, GESTO, MOMENTO
       const [deed, event, moment] = await Promise.all([
-        _findOrCreateDeed(importRow, DbDeeds),
-        _findOrCreateEvent(importRow, DbEvents),
-        _findOrCreateMoment(importRow, DbMoments),
+        _findOrCreateDeed(moduleAssets, importRow, DbDeeds),
+        _findOrCreateEvent(moduleAssets, importRow, DbEvents),
+        _findOrCreateMoment(moduleAssets, importRow, DbMoments),
       ]);
 
       // REGISTRAZIONE
-      logger.debug({ title: importRow.titolo }, "CREATING: 'recording' for 'song'");
+      moduleAssets.logger.debug({ title: importRow.titolo }, "CREATING: 'recording' for 'song'");
       const newRecording = await db.recording.create({
         data: {
           comment: importRow.commento ?? null,
@@ -105,11 +103,11 @@ export const importRecords = async (importDescriptor: SchemaRecordImportList) =>
           moment: {
             connect: moment,
           },
-          createdBy: -1,
-          updatedBy: -1,
+          createdBy: moduleAssets.sessionId,
+          updatedBy: moduleAssets.sessionId,
         },
       });
-      logger.info({ id: newRecording.id }, "CREATE: 'recording'");
+      moduleAssets.logger.info({ id: newRecording.id }, "CREATE: 'recording'");
 
       recordings.push(newRecording);
     }
@@ -194,29 +192,29 @@ const _fetchImportExistentResources = async (importDescriptor: SchemaRecordImpor
 /**
  * Cerca un "evento" tra quelli recuperati dal DB. Se non esiste, la risorsa viene creata.
  * @since 1.0.0
- * @todo sostituire i `-1` di `createdBy` e `updatedBy` con la sessione attiva
+ * @todo sostituire i `moduleAssets.sessionId` di `createdBy` e `updatedBy` con la sessione attiva
  * @todo sostituire `logger` generico con 'requestLogger' usando `moduleAssets`
  * @todo valutare se eventoInizio e eventoFine possono essere opzionali nel modello
  */
-const _findOrCreateEvent = async (importRow: SchemaRecordImport, DbEvents: Event[]) => {
+const _findOrCreateEvent = async (moduleAssets: ModuleAssets, importRow: SchemaRecordImport, DbEvents: Event[]) => {
   let relatedDbEvent = DbEvents.find((_e) => _e.name === importRow.eventoNome);
   if (relatedDbEvent) {
-    logger.debug({ title: importRow.titolo }, 'already existing event to assign to recording');
+    moduleAssets.logger.debug({ title: importRow.titolo }, 'already existing event to assign to recording');
   } else {
     // creazione evento
-    logger.debug({ title: importRow.titolo }, "CREATING: 'event'");
+    moduleAssets.logger.debug({ title: importRow.titolo }, "CREATING: 'event'");
     relatedDbEvent = await db.event.create({
       data: {
         name: importRow.eventoNome,
         startDate: importRow.eventoInizio ? new Date(importRow.eventoInizio) : new Date(),
         endDate: importRow.eventoFine ? new Date(importRow.eventoFine) : new Date(),
-        createdBy: -1,
-        updatedBy: -1,
+        createdBy: moduleAssets.sessionId,
+        updatedBy: moduleAssets.sessionId,
       },
     });
-    logger.info({ name: relatedDbEvent.name, id: relatedDbEvent.id }, "CREATE: 'event'");
+    moduleAssets.logger.info({ name: relatedDbEvent.name, id: relatedDbEvent.id }, "CREATE: 'event'");
 
-    logger.debug({ event: relatedDbEvent.name }, 'add event to list fetch from DB');
+    moduleAssets.logger.debug({ event: relatedDbEvent.name }, 'add event to list fetch from DB');
     DbEvents.push(relatedDbEvent);
   }
 
@@ -226,26 +224,24 @@ const _findOrCreateEvent = async (importRow: SchemaRecordImport, DbEvents: Event
 /**
  * Cerca un "gesto" tra quelli recuperati dal DB. Se non esiste, la risorsa viene creata.
  * @since 1.0.0
- * @todo sostituire i `-1` di `createdBy` e `updatedBy` con la sessione attiva
- * @todo sostituire `logger` generico con 'requestLogger' usando `moduleAssets`
  */
-const _findOrCreateDeed = async (importRow: SchemaRecordImport, DbDeeds: Deed[]) => {
+const _findOrCreateDeed = async (moduleAssets: ModuleAssets, importRow: SchemaRecordImport, DbDeeds: Deed[]) => {
   let relatedDbDeed = DbDeeds.find((_g) => _g.type === importRow.gesto);
   if (relatedDbDeed) {
-    logger.debug({ type: importRow.gesto }, 'already existing deed to assign to recording');
+    moduleAssets.logger.debug({ type: importRow.gesto }, 'already existing deed to assign to recording');
   } else {
     // creazione evento
-    logger.debug({ type: importRow.gesto }, "CREATING: 'deed'");
+    moduleAssets.logger.debug({ type: importRow.gesto }, "CREATING: 'deed'");
     relatedDbDeed = await db.deed.create({
       data: {
         type: importRow.gesto,
-        createdBy: -1,
-        updatedBy: -1,
+        createdBy: moduleAssets.sessionId,
+        updatedBy: moduleAssets.sessionId,
       },
     });
-    logger.info({ tipo: relatedDbDeed.type, id: relatedDbDeed.id }, "CREATE: 'deed'");
+    moduleAssets.logger.info({ tipo: relatedDbDeed.type, id: relatedDbDeed.id }, "CREATE: 'deed'");
 
-    logger.debug({ name: importRow.gesto }, 'add deed to list fetch from DB');
+    moduleAssets.logger.debug({ name: importRow.gesto }, 'add deed to list fetch from DB');
     DbDeeds.push(relatedDbDeed);
   }
 
@@ -255,26 +251,24 @@ const _findOrCreateDeed = async (importRow: SchemaRecordImport, DbDeeds: Deed[])
 /**
  * Cerca un "momento" tra quelli recuperati dal DB. Se non esiste, la risorsa viene creata.
  * @since 1.0.0
- * @todo sostituire i `-1` di `createdBy` e `updatedBy` con la sessione attiva
- * @todo sostituire `logger` generico con 'requestLogger' usando `moduleAssets`
  */
-const _findOrCreateMoment = async (importRow: SchemaRecordImport, DbMoments: Moment[]) => {
+const _findOrCreateMoment = async (moduleAssets: ModuleAssets, importRow: SchemaRecordImport, DbMoments: Moment[]) => {
   let relatedDbMoment = DbMoments.find((_m) => _m.occurredOn === importRow.momento);
   if (relatedDbMoment) {
-    logger.debug({ occurredOn: importRow.momento }, 'already existing moment to assign to recording');
+    moduleAssets.logger.debug({ occurredOn: importRow.momento }, 'already existing moment to assign to recording');
   } else {
     // creazione momento
-    logger.debug({ occurredOn: importRow.momento }, "CREATING: 'moment'");
+    moduleAssets.logger.debug({ occurredOn: importRow.momento }, "CREATING: 'moment'");
     relatedDbMoment = await db.moment.create({
       data: {
         occurredOn: importRow.momento,
-        createdBy: -1,
-        updatedBy: -1,
+        createdBy: moduleAssets.sessionId,
+        updatedBy: moduleAssets.sessionId,
       },
     });
-    logger.info({ occurredOn: relatedDbMoment.occurredOn, id: relatedDbMoment.id }, "CREATE: 'moment'");
+    moduleAssets.logger.info({ occurredOn: relatedDbMoment.occurredOn, id: relatedDbMoment.id }, "CREATE: 'moment'");
 
-    logger.debug({ occurredOn: importRow.momento }, 'add momento to list fetch from DB');
+    moduleAssets.logger.debug({ occurredOn: importRow.momento }, 'add momento to list fetch from DB');
     DbMoments.push(relatedDbMoment);
   }
   return relatedDbMoment;

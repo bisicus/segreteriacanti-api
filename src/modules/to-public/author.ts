@@ -1,6 +1,6 @@
 import type { Author, Song } from '@prisma/client';
 
-import logger from '../logger';
+import type { ModuleAssets } from '../../middlewares/moduleAssets';
 import type { SongPublic } from './song';
 import { songToPublic } from './song';
 
@@ -26,15 +26,15 @@ export type AuthorPublic = Author &
  * Trasforma il modello 'Autore' nell'interfaccia pubblica. Aggiunge le eventuali relazioni
  * @since 1.0.0
  */
-export const authorToPublic = (author: AuthorWithRelated): AuthorPublic => {
+export const authorToPublic = (moduleAssets: ModuleAssets, author: AuthorWithRelated): AuthorPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { songs, ..._author } = author;
   const authorPublic: AuthorPublic = _author;
 
   if (songs) {
     authorPublic.songs = songs.map((_c) => {
-      logger.trace({ id: author.id, songId: _c.id }, "toPublic 'author': add 'song'");
-      return songToPublic(_c);
+      moduleAssets.logger.trace({ id: author.id, songId: _c.id }, "toPublic 'author': add 'song'");
+      return songToPublic(moduleAssets, _c);
     });
   }
 
