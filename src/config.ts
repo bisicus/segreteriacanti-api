@@ -57,6 +57,9 @@ export const config = {
   storage: {
     main: defaults__folders_storageMain,
     recordings: path.join(defaults__folders_storageMain, 'recordings'),
+    lyrics: path.join(defaults__folders_storageMain, 'lyrics'),
+    scores: path.join(defaults__folders_storageMain, 'scores'),
+    tablatures: path.join(defaults__folders_storageMain, 'tablatures'),
     tmp: path.join(defaults__folders_storageMain, 'tmp'),
   },
 };
