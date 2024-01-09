@@ -37,6 +37,9 @@ export const config = {
       acceptedMime: {
         audio: ['audio/mpeg', 'audio/mp4', 'audio/vnd.wav'],
         import: [mime.lookup('csv')],
+        lyrics: [mime.lookup('doc'), mime.lookup('docx'), mime.lookup('txt'), mime.lookup('pdf')],
+        scores: [mime.lookup('pdf')],
+        tablatures: [mime.lookup('doc'), mime.lookup('docx'), mime.lookup('txt'), mime.lookup('pdf')],
       },
     },
     import: {

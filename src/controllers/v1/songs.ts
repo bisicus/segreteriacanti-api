@@ -54,3 +54,15 @@ export const downloadSongTablature: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * @since 1.0.0
+ * @todo implement link method
+ */
+export const uploadAndLinkFiles: RequestHandler = async (req, res, next) => {
+  try {
+    res.status(StatusCodes.OK).json('TODO');
+  } catch (error) {
+    next(error);
+  }
+};
