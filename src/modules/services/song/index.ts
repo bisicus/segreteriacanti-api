@@ -3,12 +3,12 @@ import fs from 'fs-extra';
 import { StatusCodes } from 'http-status-codes';
 import path from 'path';
 
-import { config } from '../../config';
-import { BaseError } from '../../errors/BaseError';
-import type { ModuleAssets } from '../../middlewares/moduleAssets';
-import type { ExtractPropertiesWithPrefix } from '../../types';
-import { db } from '../db';
-import { songToPublic } from '../to-public/song';
+import { config } from '../../../config';
+import { BaseError } from '../../../errors/BaseError';
+import type { ModuleAssets } from '../../../middlewares/moduleAssets';
+import type { ExtractPropertiesWithPrefix } from '../../../types';
+import { db } from '../../db';
+import { songToPublic } from '../../to-public/song';
 
 /**
  * Returns a 'song' object, along with related resources
@@ -40,7 +40,6 @@ export const fetchSongToPublic = async (moduleAssets: ModuleAssets, songId: numb
  * Available options for song file downloading
  * @since 1.0.0
  */
-type _SongFileType = 'lyrics' | 'score' | 'tablature';
 
 /**
  * @since 1.0.0
@@ -106,15 +105,10 @@ const _getSongFile = async (moduleAssets: ModuleAssets, songId: number, fileType
   return { filepath: filepath, filename: refName };
 };
 
-////////////////////////////
-/////   FILES UPLOAD   /////
-////////////////////////////
-
 //////////////////////
 //////   UTILS   /////
 //////////////////////
 
-const _fetchSong = async (songId: number): Promise<Song> => {
   const DbSong = await db.song.findUnique({
     where: {
       id: songId,
