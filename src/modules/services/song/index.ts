@@ -9,6 +9,8 @@ import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import type { ExtractPropertiesWithPrefix } from '../../../types';
 import { db } from '../../db';
 import { songToPublic } from '../../to-public/song';
+import type { _SongFileType } from './utils';
+import { _fetchSong } from './utils';
 
 /**
  * Returns a 'song' object, along with related resources
@@ -35,11 +37,6 @@ export const fetchSongToPublic = async (moduleAssets: ModuleAssets, songId: numb
 //////////////////////////////
 /////   FILES DOWNLOAD   /////
 //////////////////////////////
-
-/**
- * Available options for song file downloading
- * @since 1.0.0
- */
 
 /**
  * @since 1.0.0
@@ -103,20 +100,4 @@ const _getSongFile = async (moduleAssets: ModuleAssets, songId: number, fileType
   }
 
   return { filepath: filepath, filename: refName };
-};
-
-//////////////////////
-//////   UTILS   /////
-//////////////////////
-
-  const DbSong = await db.song.findUnique({
-    where: {
-      id: songId,
-    },
-  });
-  if (!DbSong) {
-    throw new BaseError('not-found', 'recording not found', StatusCodes.NOT_FOUND);
-  }
-
-  return DbSong;
 };
