@@ -12,6 +12,8 @@ import { songToPublic } from '../../to-public/song';
 import type { _SongFileType } from './utils';
 import { _fetchSong } from './utils';
 
+export * from './link-files';
+
 /**
  * Returns a 'song' object, along with related resources
  * @since 1.0.0
