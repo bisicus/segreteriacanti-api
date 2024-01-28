@@ -9,7 +9,7 @@ import { recordingToPublic } from './recording';
  * input composto da modello con relazioni per trasformare 'Gesto' nell'interfaccia pubblica
  * @since 1.0.0
  */
-export type DeedConRelazioni = Deed &
+export type DeedWithRelated = Deed &
   Partial<{
     recordings: Recording[];
   }>;
@@ -27,7 +27,7 @@ export type DeedPublic = Deed &
  * Trasforma il modello 'Gesto' nell'interfaccia pubblica. Aggiunge le eventuali relazioni
  * @since 1.0.0
  */
-export const deedToPublic = (moduleAssets: ModuleAssets, deed: DeedConRelazioni): DeedPublic => {
+export const deedToPublic = (moduleAssets: ModuleAssets, deed: DeedWithRelated): DeedPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { recordings, ..._deed } = deed;
   const deedPublic: DeedPublic = _deed;
