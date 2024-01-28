@@ -9,7 +9,7 @@ import { fetchRecordingToPublic, getRecordingFile, linkUploadedFile } from '../.
  */
 export const getRecordingObject: RequestHandler = async (req, res, next) => {
   try {
-    const recording = await fetchRecordingToPublic(req.assets, Number(req.params['id']));
+    const recording = await fetchRecordingToPublic(req.assets, Number(req.params.id));
 
     res.status(StatusCodes.OK).json(recording);
   } catch (error) {
@@ -22,7 +22,7 @@ export const getRecordingObject: RequestHandler = async (req, res, next) => {
  */
 export const downloadAsset: RequestHandler = async (req, res, next) => {
   try {
-    const { filepath, filename } = await getRecordingFile(req.assets, Number(req.params['id']));
+    const { filepath, filename } = await getRecordingFile(req.assets, Number(req.params.id));
 
     res.download(filepath, filename); // Set content-disposition and send file.
   } catch (error) {
@@ -40,7 +40,7 @@ export const uploadAssets: RequestHandler = async (req, res, next) => {
       throw new BaseError('validation', 'missing file', StatusCodes.BAD_REQUEST);
     }
 
-    const registrazioneUpdated = await linkUploadedFile(req.assets, Number(req.params['id']), req.file);
+    const registrazioneUpdated = await linkUploadedFile(req.assets, Number(req.params.id), req.file);
 
     res.status(StatusCodes.OK).json(registrazioneUpdated);
   } catch (error) {
