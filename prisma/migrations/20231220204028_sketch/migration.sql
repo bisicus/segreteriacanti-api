@@ -86,6 +86,20 @@ CREATE TABLE [dbo].[Song] (
 );
 
 -- CreateTable
+CREATE TABLE [dbo].[Translation] (
+    [id] INT NOT NULL IDENTITY(1,1),
+    [language] NVARCHAR(1000) NOT NULL,
+    [_song_id] INT,
+    [refText] NVARCHAR(1000),
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [Translation_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+    [updatedAt] DATETIME2 NOT NULL,
+    [deletedAt] DATETIME2,
+    [createdBy] INT,
+    [updatedBy] INT,
+    CONSTRAINT [Translation_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
+-- CreateTable
 CREATE TABLE [dbo].[_AuthorToSong] (
     [A] INT NOT NULL,
     [B] INT NOT NULL,
@@ -106,6 +120,9 @@ ALTER TABLE [dbo].[Recording] ADD CONSTRAINT [Recording__moment_id_fkey] FOREIGN
 
 -- AddForeignKey
 ALTER TABLE [dbo].[Recording] ADD CONSTRAINT [Recording__song_id_fkey] FOREIGN KEY ([_song_id]) REFERENCES [dbo].[Song]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[Translation] ADD CONSTRAINT [Translation__song_id_fkey] FOREIGN KEY ([_song_id]) REFERENCES [dbo].[Song]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[_AuthorToSong] ADD CONSTRAINT [_AuthorToSong_A_fkey] FOREIGN KEY ([A]) REFERENCES [dbo].[Author]([id]) ON DELETE CASCADE ON UPDATE CASCADE;
