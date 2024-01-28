@@ -87,15 +87,20 @@ const _getSongFile = async (moduleAssets: ModuleAssets, songId: number, fileType
 
   /** properties of 'Song' that involves a file reference */
   let _fileReferenceProperty: ExtractPropertiesWithPrefix<Song, 'ref'>;
+  let storageFolder: string;
+
   switch (fileType) {
     case 'lyrics':
       _fileReferenceProperty = 'refLyrics';
+      storageFolder = config.storage.lyrics;
       break;
     case 'score':
       _fileReferenceProperty = 'refScore';
+      storageFolder = config.storage.scores;
       break;
     case 'tablature':
       _fileReferenceProperty = 'refTablature';
+      storageFolder = config.storage.tablatures;
       break;
     default:
       moduleAssets.logger.error({ songId, type: fileType }, 'invalid file type');
@@ -106,7 +111,7 @@ const _getSongFile = async (moduleAssets: ModuleAssets, songId: number, fileType
   if (refName === null) {
     throw new BaseError('not-found', 'file not found', StatusCodes.NOT_FOUND);
   }
-  const filepath = path.join(config.storage.recordings, refName);
+  const filepath = path.join(storageFolder, refName);
   if (fs.existsSync(filepath) === false) {
     moduleAssets.logger.fatal({ path: filepath, songId, type: fileType }, 'non-existent file');
     throw new BaseError('not-found', 'file not available', StatusCodes.INTERNAL_SERVER_ERROR);
