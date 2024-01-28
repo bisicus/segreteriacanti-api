@@ -3,7 +3,14 @@ import multer from 'multer';
 import { z } from 'zod';
 
 import { config } from '../../config';
-import { downloadSongLyrics, downloadSongScore, downloadSongTablature, getSongObject, uploadAndLinkFiles } from '../../controllers/v1/songs';
+import {
+  downloadSongLyrics,
+  downloadSongScore,
+  downloadSongTablature,
+  getSongObject,
+  listSongs,
+  uploadAndLinkFiles,
+} from '../../controllers/v1/songs';
 import requestValidation from '../../middlewares/validation';
 import { IDValidator } from '../../validators/common';
 
@@ -11,6 +18,11 @@ import { IDValidator } from '../../validators/common';
  * @since 1.0.0
  */
 const songsRouter = Router();
+
+/**
+ * @todo add validator for query filters
+ */
+songsRouter.get('/', listSongs);
 
 songsRouter.get(
   '/:id',

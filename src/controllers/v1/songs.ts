@@ -2,8 +2,29 @@ import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
-import { fetchSongToPublic, getSongFileLyrics, getSongFileScore, getSongFileTablature, linkUploadedFiles } from '../../modules/services/song';
+import {
+  fetchSongToPublic,
+  getSongFileLyrics,
+  getSongFileScore,
+  getSongFileTablature,
+  linkUploadedFiles,
+  listSongsToPublic,
+} from '../../modules/services/song';
 import { isStringRecord } from '../../modules/utils';
+
+/**
+ * @since 1.0.0
+ * @todo query param to list filters
+ */
+export const listSongs: RequestHandler = async (req, res, next) => {
+  try {
+    const songList = await listSongsToPublic(req.assets);
+
+    res.status(StatusCodes.OK).json(songList);
+  } catch (error) {
+    next(error);
+  }
+};
 
 /**
  * @since 1.0.0
