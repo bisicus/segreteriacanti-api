@@ -36,6 +36,17 @@ export const fetchSongToPublic = async (moduleAssets: ModuleAssets, songId: numb
   return songToPublic(moduleAssets, DbSong);
 };
 
+/**
+ * @since 1.0.0
+ * @todo add filters
+ */
+export const listSongsToPublic = async (moduleAssets: ModuleAssets) => {
+  const DbSongList = await db.song.findMany();
+
+  // public interface
+  return DbSongList.map((DbSong) => songToPublic(moduleAssets, DbSong));
+};
+
 //////////////////////////////
 /////   FILES DOWNLOAD   /////
 //////////////////////////////
