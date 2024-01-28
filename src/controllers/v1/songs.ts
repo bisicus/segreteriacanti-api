@@ -31,7 +31,7 @@ export const listSongs: RequestHandler = async (req, res, next) => {
  */
 export const getSongObject: RequestHandler = async (req, res, next) => {
   try {
-    const song = await fetchSongToPublic(req.assets, Number(req.params['id']));
+    const song = await fetchSongToPublic(req.assets, Number(req.params.id));
 
     res.status(StatusCodes.OK).json(song);
   } catch (error) {
@@ -44,7 +44,7 @@ export const getSongObject: RequestHandler = async (req, res, next) => {
  */
 export const downloadSongLyrics: RequestHandler = async (req, res, next) => {
   try {
-    const { filepath, filename } = await getSongFileLyrics(req.assets, Number(req.params['id']));
+    const { filepath, filename } = await getSongFileLyrics(req.assets, Number(req.params.id));
 
     res.download(filepath, filename); // Set content-disposition and send file.
   } catch (error) {
@@ -57,7 +57,7 @@ export const downloadSongLyrics: RequestHandler = async (req, res, next) => {
  */
 export const downloadSongScore: RequestHandler = async (req, res, next) => {
   try {
-    const { filepath, filename } = await getSongFileScore(req.assets, Number(req.params['id']));
+    const { filepath, filename } = await getSongFileScore(req.assets, Number(req.params.id));
 
     res.download(filepath, filename); // Set content-disposition and send file.
   } catch (error) {
@@ -70,7 +70,7 @@ export const downloadSongScore: RequestHandler = async (req, res, next) => {
  */
 export const downloadSongTablature: RequestHandler = async (req, res, next) => {
   try {
-    const { filepath, filename } = await getSongFileTablature(req.assets, Number(req.params['id']));
+    const { filepath, filename } = await getSongFileTablature(req.assets, Number(req.params.id));
 
     res.download(filepath, filename); // Set content-disposition and send file.
   } catch (error) {
@@ -80,7 +80,6 @@ export const downloadSongTablature: RequestHandler = async (req, res, next) => {
 
 /**
  * @since 1.0.0
- * @todo implement link method
  * @todo move validation in separate method
  */
 export const uploadAndLinkFiles: RequestHandler = async (req, res, next) => {
