@@ -26,6 +26,7 @@ export const fetchSongToPublic = async (moduleAssets: ModuleAssets, songId: numb
     include: {
       authors: true,
       recordings: true,
+      translation: true,
     },
   });
   if (!DbSong) {
