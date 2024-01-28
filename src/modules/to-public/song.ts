@@ -1,10 +1,11 @@
-import type { Author, Recording, Song } from '@prisma/client';
+import type { Author, Recording, Song, Translation } from '@prisma/client';
 
 import type { ModuleAssets } from '../../middlewares/moduleAssets';
 import type { AuthorPublic } from './author';
 import { authorToPublic } from './author';
 import type { RecordingPublic } from './recording';
 import { recordingToPublic } from './recording';
+import { type TranslationPublic, traslationToPublic } from './translations';
 
 /**
  * input composto da modello con relazioni per trasformare 'Canto' nell'interfaccia pubblica
@@ -14,6 +15,7 @@ export type SongWithRelated = Song &
   Partial<{
     authors: Author[];
     recordings: Recording[];
+    translations: Translation[];
   }>;
 
 /**
@@ -24,6 +26,7 @@ export type SongPublic = Song &
   Partial<{
     authors: AuthorPublic[];
     recordings: RecordingPublic[];
+    translations: TranslationPublic[];
   }>;
 
 /**
@@ -32,7 +35,7 @@ export type SongPublic = Song &
  */
 export const songToPublic = (moduleAssets: ModuleAssets, song: SongWithRelated): SongPublic => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { authors, recordings, ..._song } = song;
+  const { authors, recordings, translations, ..._song } = song;
   const songPublic: SongPublic = _song;
 
   if (Array.isArray(authors)) {
@@ -45,6 +48,12 @@ export const songToPublic = (moduleAssets: ModuleAssets, song: SongWithRelated):
     songPublic.recordings = recordings.map((_r) => {
       moduleAssets.logger.trace({ id: song.id, registrazioneId: _r.id }, "toPublic 'canto': aggiunta 'registrazione'");
       return recordingToPublic(moduleAssets, _r);
+    });
+  }
+  if (Array.isArray(translations)) {
+    songPublic.translations = translations.map((_t) => {
+      moduleAssets.logger.trace({ id: song.id, translationId: _t.id }, "toPublic 'song': add 'translation'");
+      return traslationToPublic(moduleAssets, _t);
     });
   }
 
