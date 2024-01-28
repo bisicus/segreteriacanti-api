@@ -37,6 +37,9 @@ export const config = {
       acceptedMime: {
         audio: ['audio/mpeg', 'audio/mp4', 'audio/vnd.wav'],
         import: [mime.lookup('csv')],
+        lyrics: [mime.lookup('doc'), mime.lookup('docx'), mime.lookup('txt'), mime.lookup('pdf')],
+        scores: [mime.lookup('pdf')],
+        tablatures: [mime.lookup('doc'), mime.lookup('docx'), mime.lookup('txt'), mime.lookup('pdf')],
       },
     },
     import: {
@@ -57,6 +60,9 @@ export const config = {
   storage: {
     main: defaults__folders_storageMain,
     recordings: path.join(defaults__folders_storageMain, 'recordings'),
+    lyrics: path.join(defaults__folders_storageMain, 'lyrics'),
+    scores: path.join(defaults__folders_storageMain, 'scores'),
+    tablatures: path.join(defaults__folders_storageMain, 'tablatures'),
     tmp: path.join(defaults__folders_storageMain, 'tmp'),
   },
 };

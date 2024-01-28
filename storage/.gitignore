@@ -3,5 +3,7 @@
 # Except this file
 !.gitignore
 # Except storage folders (but not content)
+!lyrics
 !recordings
+!scores
 !tmp
