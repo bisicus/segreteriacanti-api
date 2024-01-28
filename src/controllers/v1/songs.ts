@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
-import { fetchSongToPublic, getSongFileLyrics, getSongFileScore, getSongFileTablature } from '../../modules/services/song';
+import { fetchSongToPublic, getSongFileLyrics, getSongFileScore, getSongFileTablature, linkUploadedFiles } from '../../modules/services/song';
 import { isStringRecord } from '../../modules/utils';
 
 /**
@@ -94,7 +94,10 @@ export const uploadAndLinkFiles: RequestHandler = async (req, res, next) => {
       throw new BaseError('validation', 'missing files', StatusCodes.BAD_REQUEST);
     }
 
-    res.status(StatusCodes.OK).json('TODO');
+    // Update song ref(s)
+    const updatedSong = await linkUploadedFiles(req.assets, Number(req.params.id), parsedFiles);
+
+    res.status(StatusCodes.OK).json(updatedSong);
   } catch (error) {
     next(error);
   }
