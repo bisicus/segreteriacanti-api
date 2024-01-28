@@ -31,7 +31,7 @@ CREATE TABLE [dbo].[Event] (
     [id] INT NOT NULL IDENTITY(1,1),
     [name] NVARCHAR(1000) NOT NULL,
     [startDate] DATE NOT NULL,
-    [endDate∏] DATE NOT NULL,
+    [endDate] DATE NOT NULL,
     [createdAt] DATETIME2 NOT NULL CONSTRAINT [Event_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
     [updatedAt] DATETIME2 NOT NULL,
     [deletedAt] DATETIME2,
