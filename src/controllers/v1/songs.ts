@@ -93,29 +93,8 @@ export const uploadAndLinkFiles: RequestHandler = async (req, res, next) => {
       throw new BaseError('validation', 'invalid files', StatusCodes.BAD_REQUEST);
     }
 
-    const maybeMultipleFiles = Object.entries(req.files)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .filter(([_filename, files]) => files.length > 1)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .map(([_filename, _files]) => _filename);
-    if (maybeMultipleFiles.length) {
-      throw new BaseError('validation', `invalid file properties ${maybeMultipleFiles.join(', ')}`, StatusCodes.BAD_REQUEST);
-    }
-
-    /** object with a single file per property */
-    const parsedFiles = Object.fromEntries(
-      Object.entries(req.files).flatMap(([filename, files]) => {
-        // remove properties with no files
-        return files.length ? [[filename, files[0] as Express.Multer.File]] : [];
-      })
-    );
-
-    if (Object.keys(parsedFiles).length === 0) {
-      throw new BaseError('validation', 'missing files', StatusCodes.BAD_REQUEST);
-    }
-
     // Update song ref(s)
-    const updatedSong = await linkUploadedFiles(req.assets, Number(req.params.id), parsedFiles);
+    const updatedSong = await linkUploadedFiles(req.assets, Number(req.params.id), req.files);
 
     res.status(StatusCodes.OK).json(updatedSong);
   } catch (error) {

@@ -65,7 +65,7 @@ type FileLinkStructAfterMove = _FileLinkElemAfterMove[];
  * @since 1.0.0
  * @todo add archive of replaced ref files
  */
-export const linkUploadedFiles = async (moduleAssets: ModuleAssets, songId: number, files: Record<string, Express.Multer.File>): Promise<Song> => {
+export const linkUploadedFiles = async (moduleAssets: ModuleAssets, songId: number, files: Record<string, Express.Multer.File[]>): Promise<Song> => {
   let DbSong = await _fetchSong(songId);
 
   const supportStruct = _createSupportStructure(moduleAssets, DbSong, files);
@@ -86,8 +86,21 @@ export const linkUploadedFiles = async (moduleAssets: ModuleAssets, songId: numb
  * @since 1.0.0
  * @todo add archive of replaced ref files
  */
-const _createSupportStructure = (moduleAssets: ModuleAssets, DbSong: Song, files: Record<string, Express.Multer.File>): FileLinkStruct => {
-  return Object.entries(files).map(([fieldname, file]): _FileLinkElem => {
+const _createSupportStructure = (moduleAssets: ModuleAssets, DbSong: Song, files: Record<string, Express.Multer.File[]>): FileLinkStruct => {
+  return Object.entries(files).flatMap(([fieldname, files]): _FileLinkElem[] => {
+    // exclude empty entities
+    if (Array.isArray(files) === false || files.length === 0) {
+      moduleAssets.logger.debug({ songId: DbSong.id }, `discarded empty fileref property '${fieldname}'`);
+      return [];
+    }
+
+    // throw on entries without a single file
+    if (files.length > 1) {
+      throw new BaseError('validation', `field ${fieldname} must contain at most 1 file`, StatusCodes.BAD_REQUEST);
+    }
+
+    // extract file
+    const file = files[0];
     moduleAssets.logger.debug({ filename: file.filename, mime: file.mimetype, songId: DbSong.id }, `handling file '${fieldname}' for song`);
 
     /** properties of 'Song' that involves a file reference */
@@ -122,14 +135,16 @@ const _createSupportStructure = (moduleAssets: ModuleAssets, DbSong: Song, files
       pathToDelete = path.join(storageFolder, DbSong[modelRefProperty] as string);
     }
 
-    return {
-      modelRefProperty,
-      newRefValue,
-      pathToDelete,
-      newRefFilepath: path.join(storageFolder, newRefValue),
-      uploadPath: file.path,
-      moveSuccess: undefined,
-    };
+    return [
+      {
+        modelRefProperty,
+        newRefValue,
+        pathToDelete,
+        newRefFilepath: path.join(storageFolder, newRefValue),
+        uploadPath: file.path,
+        moveSuccess: undefined,
+      },
+    ];
   });
 };
 

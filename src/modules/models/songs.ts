@@ -1,45 +1,60 @@
 import type { Song } from '@prisma/client';
 import { extension } from 'mime-types';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
- * creates unique name for file ref
- * use `refLyrics` or uuid
+ * creates unique name for file ref using song title and extension of input file
  * @since 1.0.0
- * @todo support user input (that must be sanified)
  */
-export const forgeFileRefValueLyrics = (song: Song, fileMime: string | null) => {
-  let fileRef: string = song.refLyrics ?? uuidv4();
-  if (fileMime) {
-    fileRef = `${fileRef}.${extension(fileMime)}`;
+export const forgeFileRefValueLyrics = (song: Song, fileMime: string) => {
+  const songTitle = sanifiedSongTitle(song);
+  const fileExtension = extension(fileMime);
+
+  let refValue = `${songTitle}--lyrics`;
+  if (fileExtension) {
+    refValue = `${refValue}.${fileExtension}`;
   }
-  return fileRef;
+
+  return refValue;
 };
 
 /**
- * creates unique name for file ref
- * use `refScore` or uuid
+ * creates unique name for file ref using song title and extension of input file
  * @since 1.0.0
- * @todo support user input (that must be sanified)
  */
-export const forgeFileRefValueScore = (song: Song, fileMime: string | null) => {
-  let fileRef: string = song.refScore ?? uuidv4();
-  if (fileMime) {
-    fileRef = `${fileRef}.${extension(fileMime)}`;
+export const forgeFileRefValueScore = (song: Song, fileMime: string) => {
+  const songTitle = sanifiedSongTitle(song);
+  const fileExtension = extension(fileMime);
+
+  let refValue = `${songTitle}--score`;
+  if (fileExtension) {
+    refValue = `${refValue}.${fileExtension}`;
   }
-  return fileRef;
+
+  return refValue;
 };
 
 /**
- * creates unique name for file ref
- * use `refTablature` or uuid
+ * creates unique name for file ref using song title and extension of input file
  * @since 1.0.0
- * @todo support user input (that must be sanified)
  */
-export const forgeFileRefValueTablature = (song: Song, fileMime: string | null) => {
-  let fileRef: string = song.refTablature ?? uuidv4();
-  if (fileMime) {
-    fileRef = `${fileRef}.${extension(fileMime)}`;
+export const forgeFileRefValueTablature = (song: Song, fileMime: string) => {
+  const songTitle = sanifiedSongTitle(song);
+  const fileExtension = extension(fileMime);
+
+  let refValue = `${songTitle}--tablature`;
+  if (fileExtension) {
+    refValue = `${refValue}.${fileExtension}`;
   }
-  return fileRef;
+
+  return refValue;
+};
+
+/**
+ * get sanified song title
+ * - replace all sequential whitespaces with a single underscore
+ * - lowercase
+ * @since 1.0.0
+ */
+export const sanifiedSongTitle = (song: Song) => {
+  return song.title.replace(/\s+/g, '_').toLowerCase();
 };
