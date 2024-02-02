@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
  * @since 1.0.0
  * @todo support user input (that must be sanified)
  */
-export const forgeFileRefValueLyrics = (song: Song, fileMime: string | null) => {
+export const forgeFileRefValueLyrics = (song: Song, fileMime: string) => {
   let fileRef: string = song.refLyrics ?? uuidv4();
   if (fileMime) {
     fileRef = `${fileRef}.${extension(fileMime)}`;
@@ -22,7 +22,7 @@ export const forgeFileRefValueLyrics = (song: Song, fileMime: string | null) => 
  * @since 1.0.0
  * @todo support user input (that must be sanified)
  */
-export const forgeFileRefValueScore = (song: Song, fileMime: string | null) => {
+export const forgeFileRefValueScore = (song: Song, fileMime: string) => {
   let fileRef: string = song.refScore ?? uuidv4();
   if (fileMime) {
     fileRef = `${fileRef}.${extension(fileMime)}`;
@@ -36,7 +36,7 @@ export const forgeFileRefValueScore = (song: Song, fileMime: string | null) => {
  * @since 1.0.0
  * @todo support user input (that must be sanified)
  */
-export const forgeFileRefValueTablature = (song: Song, fileMime: string | null) => {
+export const forgeFileRefValueTablature = (song: Song, fileMime: string) => {
   let fileRef: string = song.refTablature ?? uuidv4();
   if (fileMime) {
     fileRef = `${fileRef}.${extension(fileMime)}`;
