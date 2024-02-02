@@ -22,14 +22,14 @@ const defaults__folders_storageMain = path.join(process.cwd(), 'storage');
 //////////////////////
 
 export const config = {
-  NODE_ENV: process.env['NODE_ENV'] || 'production',
+  NODE_ENV: process.env.NODE_ENV || 'production',
 
   server: {
-    httpPort: Number.isNaN(Number(process.env['SERVER__HTTP_PORT'])) === false ? Number(process.env['SERVER__HTTP_PORT']) : 80,
+    httpPort: Number.isNaN(Number(process.env.SERVER__HTTP_PORT)) === false ? Number(process.env.SERVER__HTTP_PORT) : 80,
   },
 
   db: {
-    connectionUrl: String(process.env['DATABASE_URL']),
+    connectionUrl: String(process.env.DATABASE_URL),
   },
 
   application: {
@@ -51,10 +51,10 @@ export const config = {
   },
 
   logging: {
-    level: <Level>process.env['LOGGING__LEVEL_APP'] || 'debug',
-    prettyPrint: ['yes', 'y', '1', 'true'].includes(String(process.env['LOGGING__PRETTYPRINT']).toLowerCase()),
-    printLevelAsLabel: ['yes', 'y', '1', 'true'].includes(String(process.env['LOGGING__LEVEL_AS_LABEL']).toLowerCase()),
-    printTime: process.env['LOGGING__PRINT_TIME'] || 'epoch',
+    level: <Level>process.env.LOGGING__LEVEL_APP || 'debug',
+    prettyPrint: ['yes', 'y', '1', 'true'].includes(String(process.env.LOGGING__PRETTYPRINT).toLowerCase()),
+    printLevelAsLabel: ['yes', 'y', '1', 'true'].includes(String(process.env.LOGGING__LEVEL_AS_LABEL).toLowerCase()),
+    printTime: process.env.LOGGING__PRINT_TIME || 'epoch',
   },
 
   storage: {

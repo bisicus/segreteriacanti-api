@@ -23,11 +23,11 @@ export default function requestLogger(options: RequestLoggerOptions = {}) {
 
     const ChildLoggerBindings: ChildLoggerBinding = {};
     if (options.includeRequestId) {
-      ChildLoggerBindings['requestId'] = req.id;
+      ChildLoggerBindings.requestId = req.id;
     }
     if (options.includeEndpoint) {
-      ChildLoggerBindings['endpoint'] = req.path;
-      ChildLoggerBindings['method'] = req.method;
+      ChildLoggerBindings.endpoint = req.path;
+      ChildLoggerBindings.method = req.method;
     }
 
     req.logger = logger.child(ChildLoggerBindings);
