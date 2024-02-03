@@ -63,6 +63,7 @@ export const config = {
     lyrics: path.join(defaults__folders_storageMain, 'lyrics'),
     scores: path.join(defaults__folders_storageMain, 'scores'),
     tablatures: path.join(defaults__folders_storageMain, 'tablatures'),
+    translations: path.join(defaults__folders_storageMain, 'translations'),
     tmp: path.join(defaults__folders_storageMain, 'tmp'),
   },
 };
