@@ -40,6 +40,7 @@ export const config = {
         lyrics: [mime.lookup('doc'), mime.lookup('docx'), mime.lookup('txt'), mime.lookup('pdf')],
         scores: [mime.lookup('pdf')],
         tablatures: [mime.lookup('doc'), mime.lookup('docx'), mime.lookup('txt'), mime.lookup('pdf')],
+        translations: [mime.lookup('doc'), mime.lookup('docx'), mime.lookup('txt'), mime.lookup('pdf')],
       },
     },
     import: {
