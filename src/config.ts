@@ -49,6 +49,11 @@ export const config = {
         arraySeparator: '..',
       },
     },
+    song: {
+      translations: {
+        filenameSeparator: '-',
+      },
+    },
   },
 
   logging: {
