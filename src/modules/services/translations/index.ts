@@ -3,6 +3,8 @@ import { StatusCodes } from 'http-status-codes';
 import { config } from '../../../config';
 import { BaseError } from '../../../errors/BaseError';
 
+export * from './link-files';
+
 /**
  * creates unique name for file ref using song title, language and extension of input file
  * @since 1.0.0
