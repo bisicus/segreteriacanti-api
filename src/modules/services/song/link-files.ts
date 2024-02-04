@@ -9,6 +9,7 @@ import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import type { ExtractPropertiesWithPrefix } from '../../../types';
 import { db } from '../../db';
 import { forgeFileRefValueLyrics, forgeFileRefValueScore, forgeFileRefValueTablature } from '../../models/songs';
+import { linkUploadedTranslations } from '../translations';
 import type { _SongFileType } from './utils';
 import { _fetchSong } from './utils';
 
@@ -68,7 +69,9 @@ type FileLinkStructAfterMove = _FileLinkElemAfterMove[];
 export const linkUploadedFiles = async (moduleAssets: ModuleAssets, songId: number, files: Record<string, Express.Multer.File[]>): Promise<Song> => {
   let DbSong = await _fetchSong(songId);
 
-  const supportStruct = _createSupportStructure(moduleAssets, DbSong, files);
+  // isolate translations
+  const { translations: translationFiles, ...songFiles } = files;
+  const supportStruct = _createSupportStructure(moduleAssets, DbSong, songFiles);
 
   // move uploaded files to relative ref directories
   const supportStructAfterMove = await _moveFiles(moduleAssets, supportStruct, DbSong);
@@ -78,6 +81,10 @@ export const linkUploadedFiles = async (moduleAssets: ModuleAssets, songId: numb
 
   // remove old files, if any
   await _deleteOldFiles(moduleAssets, DbSong, supportStructAfterMove);
+
+  if (translationFiles.length) {
+    DbSong = await linkUploadedTranslations(moduleAssets, DbSong, translationFiles);
+  }
 
   return DbSong;
 };
