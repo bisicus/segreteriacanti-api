@@ -24,7 +24,6 @@ export const defaultsModuleAssets: ModuleAssets = {
 /**
  * Gathers in a unique structure all the objects built for the request
  * @since 1.0.0
- * @todo add sessionId
  */
 export default function moduleAssets(): RequestHandler {
   return function (req, _res, next) {
