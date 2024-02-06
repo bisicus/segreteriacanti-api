@@ -89,6 +89,8 @@ songsRouter.post(
         acceptFile = config.application.uploads.acceptedMime.scores.includes(file.mimetype);
       } else if (file.fieldname === 'tablature') {
         acceptFile = config.application.uploads.acceptedMime.scores.includes(file.mimetype);
+      } else if (file.fieldname === 'translations') {
+        acceptFile = config.application.uploads.acceptedMime.translations.includes(file.mimetype);
       }
 
       cb(null, acceptFile);
@@ -105,6 +107,9 @@ songsRouter.post(
     {
       name: 'tablature',
       maxCount: 1,
+    },
+    {
+      name: 'translations',
     },
   ]),
   uploadAndLinkFiles

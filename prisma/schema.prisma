@@ -93,7 +93,7 @@ model Recording {
 
 /// @since 1.0.0
 model Song {
-  id           Int         @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   title        String
   // filesystem reference
   refLyrics    String?
@@ -104,10 +104,28 @@ model Song {
   /// --- RELATIONS --- ///
   authors      Author[]
   recordings   Recording[]
+  translation  Translation[]
   /// --- SYSTEM PROPERTIES --- ///
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   deletedAt    DateTime?
   createdBy    Int?
   updatedBy    Int?
+}
+
+/// @since 1.0.0
+model Translation {
+  id        Int       @id @default(autoincrement())
+  language  String
+  song_id   Int?      @map("_song_id")
+  // filesystem reference
+  refText   String?
+  /// --- RELATIONS --- ///
+  song      Song?     @relation(fields: [song_id], references: [id])
+  /// --- SYSTEM PROPERTIES --- ///
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  createdBy Int?
+  updatedBy Int?
 }

@@ -40,12 +40,18 @@ export const config = {
         lyrics: [mime.lookup('doc'), mime.lookup('docx'), mime.lookup('txt'), mime.lookup('pdf')],
         scores: [mime.lookup('pdf')],
         tablatures: [mime.lookup('doc'), mime.lookup('docx'), mime.lookup('txt'), mime.lookup('pdf')],
+        translations: [mime.lookup('doc'), mime.lookup('docx'), mime.lookup('txt'), mime.lookup('pdf')],
       },
     },
     import: {
       csv: {
         delimiters: [';', ','],
         arraySeparator: '..',
+      },
+    },
+    song: {
+      translations: {
+        filenameSeparator: '-',
       },
     },
   },
@@ -63,6 +69,7 @@ export const config = {
     lyrics: path.join(defaults__folders_storageMain, 'lyrics'),
     scores: path.join(defaults__folders_storageMain, 'scores'),
     tablatures: path.join(defaults__folders_storageMain, 'tablatures'),
+    translations: path.join(defaults__folders_storageMain, 'translations'),
     tmp: path.join(defaults__folders_storageMain, 'tmp'),
   },
 };

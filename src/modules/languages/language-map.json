@@ -1,0 +1,9 @@
+{
+  "de": ["ger", "german", "te", "ted", "tedesco"],
+  "en": ["eng", "english", "ing", "inglese"],
+  "es": ["espagnol", "spa", "spagnolo", "spanish"],
+  "fr": ["fra", "francese", "french"],
+  "it": ["ita", "italian", "italiano"],
+  "pt": ["por", "portoghese", "portuguese", "pr"],
+  "ru": ["russian", "russo"]
+}
