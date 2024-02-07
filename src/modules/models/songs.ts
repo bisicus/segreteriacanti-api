@@ -51,10 +51,11 @@ export const forgeFileRefValueTablature = (song: Song, fileMime: string) => {
 
 /**
  * get sanified song title
+ * - remove non canonical characters like accents, symbols, ligatures
  * - replace all sequential whitespaces with a single underscore
  * - lowercase
  * @since 1.0.0
  */
 export const sanifiedSongTitle = (song: Song) => {
-  return song.title.replace(/\s+/g, '_').toLowerCase();
+  return song.title.normalize('NFKD').replace(/\s+/g, '_').toLowerCase();
 };
