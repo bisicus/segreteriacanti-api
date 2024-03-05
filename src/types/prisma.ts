@@ -1,5 +1,7 @@
 import type { Prisma } from '@prisma/client';
 
+import type { ExtractArrayType } from '.';
+
 /**
  * All prisma model names
  * @since 1.0.0
@@ -23,6 +25,12 @@ export type PrismaWhereType<T extends PrismaModelName> = NonNullable<PrismaFindM
  * @since 1.0.0
  */
 export type PrismaWhereAndType<T extends PrismaModelName> = NonNullable<PrismaWhereType<T>['AND']>;
+
+/**
+ * A "AND" `whereInput` type common to all prisma models, that is only array.
+ * @since 1.0.0
+ */
+export type PrismaWhereAndTypeArrayOnly<T extends PrismaModelName> = ExtractArrayType<PrismaWhereAndType<T>>;
 
 /**
  * A "OR" `whereInput` type common to all prisma models
