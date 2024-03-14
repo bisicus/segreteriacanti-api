@@ -4,13 +4,13 @@ import { StatusCodes } from 'http-status-codes';
 import { extension } from 'mime-types';
 import path from 'path';
 
-import { config } from '../../config';
-import { BaseError } from '../../errors/BaseError';
-import type { ModuleAssets } from '../../middlewares/moduleAssets';
-import { db } from '../db';
-import type { RecordingWithTitle } from '../models/recording';
-import { forgeFilename } from '../models/recording';
-import { recordingToPublic } from '../to-public/recording';
+import { config } from '../../../config';
+import { BaseError } from '../../../errors/BaseError';
+import type { ModuleAssets } from '../../../middlewares/moduleAssets';
+import { db } from '../../db';
+import type { RecordingWithTitle } from '../../models/recording';
+import { forgeFilename } from '../../models/recording';
+import { recordingToPublic } from '../../to-public/recording';
 
 /**
  * Ritorna l'oggetto che descrive una registrazione. Allega eventualmente le entità relazionate.
