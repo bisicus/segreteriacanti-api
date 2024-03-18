@@ -5,6 +5,7 @@ import { authorsRouter } from './authors';
 import { importRouter } from './import';
 import { recordingsRouter } from './recordings';
 import { songsRouter } from './songs';
+import { translationsRouter } from './translations';
 
 /**
  * @since 1.0.0
@@ -19,5 +20,6 @@ v1Routes.use('/authors', authorsRouter);
 v1Routes.use('/import', importRouter);
 v1Routes.use('/recordings', recordingsRouter);
 v1Routes.use('/songs', songsRouter);
+v1Routes.use('/translations', translationsRouter);
 
 export { v1Routes };
