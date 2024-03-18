@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import moduleAssets from '../../middlewares/moduleAssets';
+import { authorsRouter } from './authors';
 import { importRouter } from './import';
 import { recordingsRouter } from './recordings';
 import { songsRouter } from './songs';
@@ -14,6 +15,7 @@ const v1Routes = Router();
 v1Routes.use(moduleAssets());
 
 // load nested routers or endpoints
+v1Routes.use('/authors', authorsRouter);
 v1Routes.use('/import', importRouter);
 v1Routes.use('/recordings', recordingsRouter);
 v1Routes.use('/songs', songsRouter);
