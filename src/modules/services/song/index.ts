@@ -8,11 +8,12 @@ import { BaseError } from '../../../errors/BaseError';
 import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import type { ExtractPropertiesWithPrefix } from '../../../types';
 import { db } from '../../db';
-import { songToPublic } from '../../to-public/song';
+import { songToPublic } from '.';
 import type { _SongFileType } from './utils';
 import { _fetchSong } from './utils';
 
 export * from './link-files';
+export * from './to-public';
 
 /**
  * Returns a 'song' object, along with related resources

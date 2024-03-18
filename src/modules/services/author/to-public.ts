@@ -1,8 +1,7 @@
 import type { Author, Song } from '@prisma/client';
 
-import type { ModuleAssets } from '../../middlewares/moduleAssets';
-import type { SongPublic } from './song';
-import { songToPublic } from './song';
+import type { ModuleAssets } from '../../../middlewares/moduleAssets';
+import { type SongPublic, songToPublic } from '../song';
 
 /**
  * input composto da modello con relazioni per trasformare 'Autore' nell'interfaccia pubblica

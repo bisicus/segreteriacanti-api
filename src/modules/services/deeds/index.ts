@@ -3,7 +3,9 @@ import { StatusCodes } from 'http-status-codes';
 import { BaseError } from '../../../errors/BaseError';
 import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import { db } from '../../db';
-import { deedToPublic } from '../../to-public/deed';
+import { deedToPublic } from '.';
+
+export * from './to-public';
 
 /**
  * Returns an 'deed' object, along with related resources

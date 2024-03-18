@@ -5,9 +5,10 @@ import { BaseError } from '../../../errors/BaseError';
 import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import { db } from '../../db';
 import { getIso639_1 } from '../../languages/iso639-1';
-import { traslationToPublic } from '../../to-public/translations';
+import { traslationToPublic } from '.';
 
 export * from './link-files';
+export * from './to-public';
 
 /**
  * Returns an 'author' object, along with related resources

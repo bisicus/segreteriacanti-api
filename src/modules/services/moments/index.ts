@@ -3,7 +3,9 @@ import { StatusCodes } from 'http-status-codes';
 import { BaseError } from '../../../errors/BaseError';
 import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import { db } from '../../db';
-import { momentToPublic } from '../../to-public/moment';
+import { momentToPublic } from '.';
+
+export * from './to-public';
 
 /**
  * Returns an 'moment' object, along with related resources
