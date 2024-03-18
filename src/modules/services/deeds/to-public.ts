@@ -1,9 +1,8 @@
 import type { Deed, Recording } from '@prisma/client';
 
-import type { ModuleAssets } from '../../middlewares/moduleAssets';
-import logger from '../logger';
-import type { RecordingPublic } from './recording';
-import { recordingToPublic } from './recording';
+import type { ModuleAssets } from '../../../middlewares/moduleAssets';
+import type { RecordingPublic } from '../recording';
+import { recordingToPublic } from '../recording';
 
 /**
  * input composto da modello con relazioni per trasformare 'Gesto' nell'interfaccia pubblica

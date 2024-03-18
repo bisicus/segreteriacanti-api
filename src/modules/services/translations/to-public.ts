@@ -1,7 +1,8 @@
 import type { Song, Translation } from '@prisma/client';
 
-import type { ModuleAssets } from '../../middlewares/moduleAssets';
-import { type SongPublic, songToPublic } from './song';
+import type { ModuleAssets } from '../../../middlewares/moduleAssets';
+import type { SongPublic } from '../song';
+import { songToPublic } from '../song';
 
 /**
  * Model with eventually related entities to be exported to public interface

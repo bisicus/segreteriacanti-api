@@ -10,7 +10,9 @@ import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import { db } from '../../db';
 import type { RecordingWithTitle } from '../../models/recording';
 import { forgeFilename } from '../../models/recording';
-import { recordingToPublic } from '../../to-public/recording';
+import { recordingToPublic } from '.';
+
+export * from './to-public';
 
 /**
  * @since 1.0.0

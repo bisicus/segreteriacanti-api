@@ -1,8 +1,8 @@
 import type { Event, Recording } from '@prisma/client';
 
-import type { ModuleAssets } from '../../middlewares/moduleAssets';
-import type { RecordingPublic } from './recording';
-import { recordingToPublic } from './recording';
+import type { ModuleAssets } from '../../../middlewares/moduleAssets';
+import type { RecordingPublic } from '../recording';
+import { recordingToPublic } from '../recording';
 
 /**
  * input composto da modello con relazioni per trasformare 'Evento' nell'interfaccia pubblica

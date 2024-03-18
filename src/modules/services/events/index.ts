@@ -3,7 +3,9 @@ import { StatusCodes } from 'http-status-codes';
 import { BaseError } from '../../../errors/BaseError';
 import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import { db } from '../../db';
-import { eventToPublic } from '../../to-public/event';
+import { eventToPublic } from '.';
+
+export * from './to-public';
 
 /**
  * Returns an 'event' object, along with related resources

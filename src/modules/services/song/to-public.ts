@@ -1,11 +1,9 @@
 import type { Author, Recording, Song, Translation } from '@prisma/client';
 
-import type { ModuleAssets } from '../../middlewares/moduleAssets';
-import type { AuthorPublic } from './author';
-import { authorToPublic } from './author';
-import type { RecordingPublic } from './recording';
-import { recordingToPublic } from './recording';
-import { type TranslationPublic, traslationToPublic } from './translations';
+import type { ModuleAssets } from '../../../middlewares/moduleAssets';
+import { type AuthorPublic, authorToPublic } from '../author';
+import { type RecordingPublic, recordingToPublic } from '../recording';
+import { type TranslationPublic, traslationToPublic } from '../translations';
 
 /**
  * input composto da modello con relazioni per trasformare 'Canto' nell'interfaccia pubblica

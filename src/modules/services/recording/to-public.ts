@@ -1,14 +1,10 @@
 import type { Deed, Event, Moment, Recording, Song } from '@prisma/client';
 
-import type { ModuleAssets } from '../../middlewares/moduleAssets';
-import type { DeedPublic } from './deed';
-import { deedToPublic } from './deed';
-import type { EventPublic } from './event';
-import { eventToPublic } from './event';
-import type { MomentPublic } from './moment';
-import { momentToPublic } from './moment';
-import type { SongPublic } from './song';
-import { songToPublic } from './song';
+import type { ModuleAssets } from '../../../middlewares/moduleAssets';
+import { type DeedPublic, deedToPublic } from '../deeds';
+import { type EventPublic, eventToPublic } from '../events';
+import { type MomentPublic, momentToPublic } from '../moments';
+import { type SongPublic, songToPublic } from '../song';
 
 /**
  * input composto da modello con relazioni per trasformare 'Registrazione' nell'interfaccia pubblica
