@@ -2,7 +2,21 @@ import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseError } from '../../errors/BaseError';
-import { fetchRecordingToPublic, getRecordingFile, linkUploadedFile } from '../../modules/services/recording';
+import { fetchRecordingToPublic, getRecordingFile, linkUploadedFile, listRecordingsToPublic } from '../../modules/services/recording';
+
+/**
+ * @since 1.0.0
+ * @todo query param to list filters
+ */
+export const listRecordings: RequestHandler = async (req, res, next) => {
+  try {
+    const recordingList = await listRecordingsToPublic(req.assets);
+
+    res.status(StatusCodes.OK).json(recordingList);
+  } catch (error) {
+    next(error);
+  }
+};
 
 /**
  * @since 1.0.0

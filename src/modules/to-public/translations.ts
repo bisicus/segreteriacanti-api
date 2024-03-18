@@ -9,7 +9,7 @@ import { type SongPublic, songToPublic } from './song';
  */
 export type TranslationWithRelated = Translation &
   Partial<{
-    song: Song;
+    song: Song | null;
   }>;
 
 /**
