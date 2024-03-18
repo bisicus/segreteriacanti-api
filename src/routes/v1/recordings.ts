@@ -3,7 +3,7 @@ import multer from 'multer';
 import { z } from 'zod';
 
 import { config } from '../../config';
-import { downloadAsset, getRecordingObject, uploadAssets } from '../../controllers/v1/recordings';
+import { downloadAsset, getRecordingObject, listRecordings, uploadAssets } from '../../controllers/v1/recordings';
 import requestValidation from '../../middlewares/validation';
 import { IDValidator } from '../../validators/common';
 
@@ -11,6 +11,11 @@ import { IDValidator } from '../../validators/common';
  * @since 1.0.0
  */
 const recordingsRouter = Router();
+
+/**
+ * @todo add validator for query filters
+ */
+recordingsRouter.get('/', listRecordings);
 
 recordingsRouter.get(
   '/:id',
