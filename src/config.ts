@@ -54,6 +54,22 @@ export const config = {
         filenameSeparator: '-',
       },
     },
+    findFilters: {
+      operators: {
+        and: ':and:',
+        arrayMatchAllConditions: ':all:',
+        arrayNotIn: ':not-in:',
+        numberGreater: ':gt:',
+        numberGreaterEqual: ':gte:',
+        numberLess: ':lt:',
+        numberLessEqual: ':lte:',
+        or: ':or:',
+        stringContains: ':contains:',
+        stringEndsWith: ':endsWith:',
+        stringStartsWith: ':startsWith:',
+      },
+      booleans: ['1', 'true', 'yes', 'y'],
+    },
   },
 
   logging: {
