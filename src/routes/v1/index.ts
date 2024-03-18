@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import moduleAssets from '../../middlewares/moduleAssets';
 import { authorsRouter } from './authors';
+import { deedsRouter } from './deeds';
 import { eventsRouter } from './events';
 import { importRouter } from './import';
 import { momentsRouter } from './moments';
@@ -19,6 +20,7 @@ v1Routes.use(moduleAssets());
 
 // load nested routers or endpoints
 v1Routes.use('/authors', authorsRouter);
+v1Routes.use('/deeds', deedsRouter);
 v1Routes.use('/events', eventsRouter);
 v1Routes.use('/import', importRouter);
 v1Routes.use('/moments', momentsRouter);
