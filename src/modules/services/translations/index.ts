@@ -6,6 +6,7 @@ import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import { db } from '../../db';
 import { getIso639_1 } from '../../languages/iso639-1';
 import { traslationToPublic } from '.';
+import { parseSearchFilters } from './search-filters';
 
 export * from './link-files';
 export * from './to-public';
@@ -33,10 +34,12 @@ export const fetchTranslationToPublic = async (moduleAssets: ModuleAssets, trans
 
 /**
  * @since 1.0.0
- * @todo add filters
  */
-export const listTranslationsToPublic = async (moduleAssets: ModuleAssets) => {
-  const DbTranslationList = await db.translation.findMany();
+export const listTranslationsToPublic = async (moduleAssets: ModuleAssets, filters: Record<string, string | string[]> = {}) => {
+  const parsedFilter = filters ? parseSearchFilters(filters) : {};
+  const DbTranslationList = await db.translation.findMany({
+    where: parsedFilter,
+  });
 
   // public interface
   return DbTranslationList.map((DbTranslation) => traslationToPublic(moduleAssets, DbTranslation));

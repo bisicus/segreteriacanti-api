@@ -4,6 +4,7 @@ import { BaseError } from '../../../errors/BaseError';
 import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import { db } from '../../db';
 import { eventToPublic } from '.';
+import { parseSearchFilters } from './search-filters';
 
 export * from './to-public';
 
@@ -30,10 +31,12 @@ export const fetchEventToPublic = async (moduleAssets: ModuleAssets, eventId: nu
 
 /**
  * @since 1.0.0
- * @todo add filters
  */
-export const listEventsToPublic = async (moduleAssets: ModuleAssets) => {
-  const DbEventList = await db.event.findMany();
+export const listEventsToPublic = async (moduleAssets: ModuleAssets, filters: Record<string, string | string[]> = {}) => {
+  const parsedFilter = filters ? parseSearchFilters(filters) : {};
+  const DbEventList = await db.event.findMany({
+    where: parsedFilter,
+  });
 
   // public interface
   return DbEventList.map((DbEvent) => eventToPublic(moduleAssets, DbEvent));

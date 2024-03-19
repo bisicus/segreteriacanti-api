@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { BaseError } from '../../../errors/BaseError';
 import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import { db } from '../../db';
+import { parseSearchFilters } from './search-filters';
 import { authorToPublic } from './to-public';
 
 export * from './to-public';
@@ -30,11 +31,13 @@ export const fetchAuthorToPublic = async (moduleAssets: ModuleAssets, authorId: 
 
 /**
  * @since 1.0.0
- * @todo add filters
  */
-export const listAuthorsToPublic = async (moduleAssets: ModuleAssets) => {
-  const DbAuthorsList = await db.author.findMany();
+export const listAuthorsToPublic = async (moduleAssets: ModuleAssets, filters: Record<string, string | string[]> = {}) => {
+  const parsedFilter = filters ? parseSearchFilters(filters) : {};
+  const DbSongList = await db.author.findMany({
+    where: parsedFilter,
+  });
 
   // public interface
-  return DbAuthorsList.map((DbAuthor) => authorToPublic(moduleAssets, DbAuthor));
+  return DbSongList.map((DbAuthor) => authorToPublic(moduleAssets, DbAuthor));
 };

@@ -9,6 +9,7 @@ import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import type { ExtractPropertiesWithPrefix } from '../../../types';
 import { db } from '../../db';
 import { songToPublic } from '.';
+import { parseSearchFilters } from './search-filters';
 import type { _SongFileType } from './utils';
 import { _fetchSong } from './utils';
 
@@ -40,10 +41,12 @@ export const fetchSongToPublic = async (moduleAssets: ModuleAssets, songId: numb
 
 /**
  * @since 1.0.0
- * @todo add filters
  */
-export const listSongsToPublic = async (moduleAssets: ModuleAssets) => {
-  const DbSongList = await db.song.findMany();
+export const listSongsToPublic = async (moduleAssets: ModuleAssets, filters: Record<string, string | string[]> = {}) => {
+  const parsedFilter = filters ? parseSearchFilters(filters) : {};
+  const DbSongList = await db.song.findMany({
+    where: parsedFilter,
+  });
 
   // public interface
   return DbSongList.map((DbSong) => songToPublic(moduleAssets, DbSong));

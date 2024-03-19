@@ -4,6 +4,7 @@ import { BaseError } from '../../../errors/BaseError';
 import type { ModuleAssets } from '../../../middlewares/moduleAssets';
 import { db } from '../../db';
 import { momentToPublic } from '.';
+import { parseSearchFilters } from './search-filters';
 
 export * from './to-public';
 
@@ -30,10 +31,12 @@ export const fetchMomentToPublic = async (moduleAssets: ModuleAssets, momentId: 
 
 /**
  * @since 1.0.0
- * @todo add filters
  */
-export const listMomentsToPublic = async (moduleAssets: ModuleAssets) => {
-  const DbMomentList = await db.moment.findMany();
+export const listMomentsToPublic = async (moduleAssets: ModuleAssets, filters: Record<string, string | string[]> = {}) => {
+  const parsedFilter = filters ? parseSearchFilters(filters) : {};
+  const DbMomentList = await db.moment.findMany({
+    where: parsedFilter,
+  });
 
   // public interface
   return DbMomentList.map((DbMoment) => momentToPublic(moduleAssets, DbMoment));

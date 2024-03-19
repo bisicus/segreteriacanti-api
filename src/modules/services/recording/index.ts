@@ -11,15 +11,18 @@ import { db } from '../../db';
 import type { RecordingWithTitle } from '../../models/recording';
 import { forgeFilename } from '../../models/recording';
 import { recordingToPublic } from '.';
+import { parseSearchFilters } from './search-filters';
 
 export * from './to-public';
 
 /**
  * @since 1.0.0
- * @todo add filters
  */
-export const listRecordingsToPublic = async (moduleAssets: ModuleAssets) => {
-  const DbRecordingList = await db.recording.findMany();
+export const listRecordingsToPublic = async (moduleAssets: ModuleAssets, filters: Record<string, string | string[]> = {}) => {
+  const parsedFilter = filters ? parseSearchFilters(filters) : {};
+  const DbRecordingList = await db.recording.findMany({
+    where: parsedFilter,
+  });
 
   // public interface
   return DbRecordingList.map((DbRecording) => recordingToPublic(moduleAssets, DbRecording));
