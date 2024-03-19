@@ -18,11 +18,12 @@ export const getAuthorObject: RequestHandler = async (req, res, next) => {
 
 /**
  * @since 1.0.0
- * @todo query param to list filters
+ * @todo query param to order
+ * @todo query param to pagination
  */
 export const listAuthors: RequestHandler = async (req, res, next) => {
   try {
-    const authorsList = await listAuthorsToPublic(req.assets);
+    const authorsList = await listAuthorsToPublic(req.assets, req.query as Record<string, string | string[]>);
 
     res.status(StatusCodes.OK).json(authorsList);
   } catch (error) {

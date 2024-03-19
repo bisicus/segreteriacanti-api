@@ -14,11 +14,12 @@ import { isStringRecord } from '../../modules/utils';
 
 /**
  * @since 1.0.0
- * @todo query param to list filters
+ * @todo query param to order
+ * @todo query param to pagination
  */
 export const listSongs: RequestHandler = async (req, res, next) => {
   try {
-    const songList = await listSongsToPublic(req.assets);
+    const songList = await listSongsToPublic(req.assets, req.query as Record<string, string | string[]>);
 
     res.status(StatusCodes.OK).json(songList);
   } catch (error) {

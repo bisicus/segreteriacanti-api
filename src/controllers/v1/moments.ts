@@ -18,11 +18,12 @@ export const getMomentObject: RequestHandler = async (req, res, next) => {
 
 /**
  * @since 1.0.0
- * @todo query param to list filters
+ * @todo query param to order
+ * @todo query param to pagination
  */
 export const listMoments: RequestHandler = async (req, res, next) => {
   try {
-    const momentsList = await listMomentsToPublic(req.assets);
+    const momentsList = await listMomentsToPublic(req.assets, req.query as Record<string, string | string[]>);
 
     res.status(StatusCodes.OK).json(momentsList);
   } catch (error) {
