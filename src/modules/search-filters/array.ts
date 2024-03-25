@@ -17,7 +17,7 @@ export const checkOperatorMatchAllConditions = (filterValues: string[]): boolean
 };
 
 /**
- * Check if the operator to match all conditions is contained within the array of filters
+ * Check if the operator 'not in' is contained within the array of filters
  * @since 1.0.0
  */
 export const checkOperatorNotIn = (filterValues: string[]): boolean => {
@@ -30,4 +30,12 @@ export const checkOperatorNotIn = (filterValues: string[]): boolean => {
   }
 
   return notIn;
+};
+
+/**
+ * Check if the operator 'not in' not is contained within the array of filters
+ * @since 1.0.0
+ */
+export const checkOperatorIsIn = (filterValues: string[]): boolean => {
+  return !checkOperatorNotIn(filterValues);
 };
