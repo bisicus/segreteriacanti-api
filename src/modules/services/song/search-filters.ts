@@ -5,6 +5,10 @@ import {
   addDateFilterToWhereConditions,
   addNumberFilterToWhereConditions,
   addStringFilterToWhereConditions,
+  checkOperatorIsIn,
+  checkOperatorMatchAllConditions,
+  stringToNumberFilter,
+  stringToStringFilter,
 } from '../../search-filters';
 
 /**
@@ -43,8 +47,118 @@ export const parseSearchFilters = (input: Record<string, string | string[]>): Pr
         },
       };
     }
+    // related models
+    else if (['author', 'author_id'].includes(property)) {
+      filters = addAuthorIdToWhereConditions(filters, filterValue);
+    } else if (property === 'author_name') {
+      filters = addAuthorNameToWhereConditions(filters, filterValue);
+    } else if (property === 'translation') {
+      filters = addTranslationToWhereConditions(filters, filterValue);
+    }
     return filters;
   }, {} as Prisma.SongWhereInput);
 
+  return filters;
+};
+
+//////////////////////////////
+/////   RELATED MODELS   /////
+//////////////////////////////
+
+//  AUTHORS
+/**
+ * @since 1.0.0
+ * @todo 'in/notIn' & 'every/some' can become a common function
+ */
+export const addAuthorIdToWhereConditions = (filters: Prisma.SongWhereInput, filterValue: string | string[]): Prisma.SongWhereInput => {
+  let filterToAdd: Prisma.SongWhereInput;
+
+  if (Array.isArray(filterValue) === false) {
+    filterToAdd = {
+      authors: {
+        some: {
+          id: stringToNumberFilter<'Author'>(filterValue, 'id', 'author'),
+        },
+      },
+    };
+  } else {
+    const operatorIsIn: 'in' | 'notIn' = checkOperatorIsIn(filterValue) ? 'in' : 'notIn';
+    const operatorEvery: keyof Prisma.TranslationListRelationFilter = checkOperatorMatchAllConditions(filterValue) ? 'every' : 'some';
+
+    const numberifiedFilterValues = filterValue.map(Number);
+
+    filterToAdd = {
+      translation: {
+        [operatorEvery]: {
+          id: {
+            [operatorIsIn]: numberifiedFilterValues,
+          },
+        } as Prisma.TranslationWhereInput,
+      },
+    };
+  }
+
+  filters = { ...filters, ...filterToAdd };
+  return filters;
+};
+
+/**
+ * @since 1.0.0
+ * @todo 'in/notIn' & 'every/some' can become a common function
+ */
+export const addAuthorNameToWhereConditions = (filters: Prisma.SongWhereInput, filterValue: string | string[]): Prisma.SongWhereInput => {
+  let filterToAdd: Prisma.SongWhereInput;
+
+  if (Array.isArray(filterValue) === false) {
+    filterToAdd = {
+      authors: {
+        some: {
+          name: stringToStringFilter<'Author'>(filterValue),
+        },
+      },
+    };
+    filters = { ...filters, ...filterToAdd };
+  } else {
+    filters = addStringFilterToWhereConditions<'Song'>(filters, filterValue, 'authors', 'author_name');
+  }
+
+  return filters;
+};
+
+//  TRANSLATION
+/**
+ * @since 1.0.0
+ */
+const addTranslationToWhereConditions = (filters: Prisma.SongWhereInput, filterValue: string | string[]): Prisma.SongWhereInput => {
+  let filterToAdd: Prisma.SongWhereInput;
+
+  if (Array.isArray(filterValue) === false) {
+    // single sting --> '===' filter
+    filterToAdd = {
+      translation: {
+        some: {
+          language: filterValue,
+        },
+      },
+    };
+  } else {
+    const operatorIsIn: 'in' | 'notIn' = checkOperatorIsIn(filterValue) ? 'in' : 'notIn';
+    const operatorEvery: keyof Prisma.TranslationListRelationFilter = checkOperatorMatchAllConditions(filterValue) ? 'every' : 'some';
+
+    filterToAdd = {
+      translation: {
+        [operatorEvery]: {
+          language: {
+            [operatorIsIn]: filterValue,
+          },
+        } as Prisma.TranslationWhereInput,
+      },
+    };
+  }
+
+  filters = {
+    ...filters,
+    ...filterToAdd,
+  };
   return filters;
 };

@@ -1,6 +1,10 @@
 import type { Prisma } from '@prisma/client';
 
 import { addDateFilterToWhereConditions, addNumberFilterToWhereConditions, addStringFilterToWhereConditions } from '../../search-filters';
+import {
+  addAuthorIdToWhereConditions as song_addAuthorIdToWhereConditions,
+  addAuthorNameToWhereConditions as song_addAuthorNameToWhereConditions,
+} from '../song/search-filters';
 
 /**
  * @since 1.0.0
@@ -50,9 +54,37 @@ export const parseSearchFilters = (input: Record<string, string | string[]>): Pr
           isNot: null,
         },
       };
+    } else if (['author', 'author_id'].includes(property)) {
+      filters = addAuthorIdToWhereConditions(filters, filterValue);
+    } else if (property === 'author_name') {
+      filters = addAuthorNameToWhereConditions(filters, filterValue);
     }
     return filters;
   }, {} as Prisma.RecordingWhereInput);
+
+  return filters;
+};
+
+export const addAuthorIdToWhereConditions = (filters: Prisma.RecordingWhereInput, filterValue: string | string[]): Prisma.RecordingWhereInput => {
+  let filterToAdd: Prisma.SongWhereInput = {};
+  filterToAdd = song_addAuthorIdToWhereConditions(filterToAdd, filterValue);
+
+  filters = {
+    ...filters,
+    song: filterToAdd,
+  };
+
+  return filters;
+};
+
+export const addAuthorNameToWhereConditions = (filters: Prisma.RecordingWhereInput, filterValue: string | string[]): Prisma.RecordingWhereInput => {
+  let filterToAdd: Prisma.SongWhereInput = {};
+  filterToAdd = song_addAuthorNameToWhereConditions(filterToAdd, filterValue);
+
+  filters = {
+    ...filters,
+    song: filterToAdd,
+  };
 
   return filters;
 };
